@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from random import random, randint
 
 
 class Box:
@@ -6,39 +7,51 @@ class Box:
         self.pos = (x, y)
         self.walls = 0b1111
 
-    def add_wall(self, dir) -> None:
-        if dir == 'north':
+    def add_wall(self, dir: list | str) -> None:
+        if 'N' in dir and 'N' in self.not_wall():
             self.walls += 0b0001
-        elif dir == 'east':
+        if 'E' in dir and 'E' in self.not_wall():
             self.walls += 0b0010
-        elif dir == 'south':
+        if 'S' in dir and 'S' in self.not_wall():
             self.walls += 0b0100
-        elif dir == 'west':
+        if 'W' in dir and 'W' in self.not_wall():
             self.walls += 0b1000
 
-    def remove_wall(self, dir) -> None:
-        if dir == 'north':
+    def remove_wall(self, dir: list | str) -> None:
+        if 'N' in dir and 'N' not in self.not_wall():
             self.walls -= 0b0001
-        elif dir == 'east':
+        if 'E' in dir and 'E' not in self.not_wall():
             self.walls -= 0b0010
-        elif dir == 'south':
+        if 'S' in dir and 'S' not in self.not_wall():
             self.walls -= 0b0100
-        elif dir == 'west':
+        if 'W' in dir and 'W' not in self.not_wall():
             self.walls -= 0b1000
+    
+    def not_wall(self) -> list[str | None]:
+        m = []
+        if self.walls % 2 == 0:
+            m.append('N')
+        if int(self.walls / 2) % 2 == 0:
+            m.append('E')
+        if int(self.walls / 4) % 2 == 0:
+            m.append('S')
+        if int(self.walls / 8) % 2 == 0:
+            m.append('W')
+        return m
 
 
 class Maze:
     def __init__(self, width: int, length: int,
                  start: tuple, end: tuple, perfect: bool):
-        # self.w = width
-        # self.l = length
+        self.w = width
+        self.l = length
         self.p = perfect
         self.s = start
         self.e = end
         self.m = self.blank_maze(width, length)
         
 
-    def blank_maze(self, width: int, length: int) -> list[list[int]]:
+    def blank_maze(self, width: int, length: int) -> list[list[Box]]:
         maze = []
         for n in range(width):
             maze.append([])
@@ -53,8 +66,11 @@ class Maze:
             self.imperfect_maze()
 
     def perfect_maze(self):
-        # stack = []
-        ...
+        stack = []
+        pos = (randint(0, self.l), randint(0, self.w))
+        while len(stack) < self.l * self.w:
+            ...
+        
 
     def imperfect_maze(self):
         ...
@@ -83,6 +99,10 @@ def generator():
     maze.generate()
     print_maze(maze.m)
     maze.p
+    maze.m[0][2].remove_wall(['W', 'N', 'E', 'S'])
+    maze.m[0][2].add_wall(['W', 'E', 'S'])
+    print(maze.m[0][2].not_wall())
+    maze.generate()
 
 
 if __name__ == "__main__":
