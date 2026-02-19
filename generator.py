@@ -86,9 +86,9 @@ class Maze:
 
         while stack:
             pos = stack[-1][:]
-            print(pos)
-            print(stack)
-            print_maze(self.m)
+            # print(pos)
+            # print(stack)
+            # print_maze(self.m)
             dir = self.can_pass_through(pos, visited)
             if dir:
                 next = choice(dir)
@@ -129,19 +129,19 @@ class Maze:
         # print(n, e, s, w)
         # print(stack)
         if n and not any(p == n for p in stack):
-            print('je peux aller au nord!')
+            # print('je peux aller au nord!')
             r.append('N')
         # print(any(p for p in stack if self.is_same(p, e)))
         if e and not any(p == e for p in stack):
-            print('et a l est!')
+            # print('et a l est!')
             r.append('E')
         # print(any(p for p in stack if self.is_same(p, s)))
         if s and not any(p == s for p in stack):
-            print('et au sud!')
+            # print('et au sud!')
             r.append('S')
         # print(any(p for p in stack if self.is_same(p, w)))
         if w and not any(p == w for p in stack):
-            print('et a l ouest!')
+            # print('et a l ouest!')
             r.append('W')
         return r
 
@@ -155,7 +155,7 @@ class Maze:
         ...
 
 
-def print_maze(maze):
+def print_maze(maze: list[list[Box]]):
     for n in maze:
         # print(n)
         for b in n:
@@ -172,12 +172,12 @@ def generator() -> list[list[Box]]:
     # ]
     end = (0, 1) # x, y
     start = (0, 0)
-    width = 4
-    length = 4
+    width = 10
+    length = 10
     maze = Maze(width, length, start, end, True)
-    print_maze(maze.m)
+    # print_maze(maze.m)
     maze.generate()
-    print_maze(maze.m)
+    # print_maze(maze.m)
     return maze.m
 
 

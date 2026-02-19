@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import curses
+from generator import Box, generator, print_maze
 
 
 def play(stdscr):
@@ -30,45 +31,44 @@ def play(stdscr):
         curses.napms(100)
 
 
-def up(pos: list[int], maze: list) -> int:
+def up(pos: list[int], maze: list[list[Box]]) -> int:
     n = [1, 3, 5, 7, 9, 11, 13, 15]
-    if any(n == maze[pos[1]][pos[0]] for n in n):
+    if any(n == maze[pos[1]][pos[0]].walls for n in n):
         return 0
     return 1
 
 
-def down(pos: list[int], maze: list) -> int:
+def down(pos: list[int], maze: list[list[Box]]) -> int:
     n = [4, 5, 6, 7, 12, 13, 14, 15]
-    if any(n == maze[pos[1]][pos[0]] for n in n):
+    if any(n == maze[pos[1]][pos[0]].walls for n in n):
         return 0
     return 1
 
 
-def left(pos: list[int], maze: list) -> int:
+def left(pos: list[int], maze: list[list[Box]]) -> int:
     n = [8, 9, 10, 11, 12, 13, 14, 15]
-    if any(n == maze[pos[1]][pos[0]] for n in n):
+    if any(n == maze[pos[1]][pos[0]].walls for n in n):
         return 0
     return 1
 
 
-def right(pos: list[int], maze: list) -> int:
+def right(pos: list[int], maze: list[list[Box]]) -> int:
     n = [2, 3, 6, 7, 10, 11, 14, 15]
-    if any(n == maze[pos[1]][pos[0]] for n in n):
+    if any(n == maze[pos[1]][pos[0]].walls for n in n):
         return 0
     return 1
 
 
-def ft_maze():
-    maze = [
-        [13, 5, 3],
-        [5, 3, 10],
-        [13, 4, 6],
-    ]
-    exit = [0, 1]
-    pos = [0, 0]
+def ft_interface():
+    maze = generator()
+    entry = [0, 0]
+    exit = [10, 10]
+    pos = entry[:]
 
+    print_maze(maze)
     print('up down right left')
     for line in sys.stdin:
+        print_maze(maze)
         print('up down right left')
         if line.rstrip() == 'q':
             break
@@ -83,9 +83,6 @@ def ft_maze():
             else:
                 pos[1] -= 1
                 print(pos)
-            if exit == pos:
-                print('maze completed!')
-                break
 
         elif line.rstrip() == '\x1b[B': #down
             if down(pos, maze) == 0:
@@ -93,9 +90,6 @@ def ft_maze():
             else:
                 pos[1] += 1
                 print(pos)
-            if exit == pos:
-                print('maze completed!')
-                break
 
         elif line.rstrip() == '\x1b[C': #right
             if right(pos, maze) == 0:
@@ -103,9 +97,6 @@ def ft_maze():
             else:
                 pos[0] += 1
                 print(pos)
-            if exit == pos:
-                print('maze completed!')
-                break
 
         elif line.rstrip() == '\x1b[D': #left
             if left(pos, maze) == 0:
@@ -113,10 +104,10 @@ def ft_maze():
             else:
                 pos[0] -= 1
                 print(pos)
-            if exit == pos:
-                print('maze completed!')
-                break
 
+        if exit == pos:
+            print('maze completed!')
+            break
         else:
             print('please select another key...')
 
@@ -124,4 +115,4 @@ def ft_maze():
 
 
 if __name__ == "__main__":
-    ft_maze()
+    ft_interface()
