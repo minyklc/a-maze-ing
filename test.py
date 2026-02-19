@@ -5,6 +5,11 @@ r = 0b1111 / 2
 r = int(r)
 print(r)
 
+pos = [0, 1]
+stack = [[0, 1], [1, 0]]
+print(pos == stack[0])
+print(pos[:])
+
 pos = 0
 if pos:
     print(0)

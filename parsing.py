@@ -15,6 +15,8 @@ def parsing() -> dict:
                 r.update({k: v})
 
     mandatory = ['WIDTH', 'HEIGHT', 'ENTRY', 'EXIT', 'OUTPUT_FILE', 'PERFECT']
+    for r in r.keys():
+        r.upper()
     for m in mandatory:
         if m not in r.keys():
             return {}

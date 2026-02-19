@@ -17,14 +17,24 @@ class Box:
         if 'W' in dir and 'W' in self.not_wall():
             self.walls += 0b1000
 
-    def remove_wall(self, dir: list | str) -> None:
-        if 'N' in dir and 'N' not in self.not_wall():
+    def remove_wall(self, dir: str, reverse: bool = False) -> None:
+        if reverse is True:
+            if dir == 'N':
+                dir = 'S'
+            elif dir == 'S':
+                dir = 'N'
+            elif dir == 'E':
+                dir = 'W'
+            elif dir == 'W':
+                dir = 'E'
+
+        if dir == 'N' and 'N' not in self.not_wall():
             self.walls -= 0b0001
-        if 'E' in dir and 'E' not in self.not_wall():
+        elif dir == 'E' and 'E' not in self.not_wall():
             self.walls -= 0b0010
-        if 'S' in dir and 'S' not in self.not_wall():
+        elif dir == 'S' and 'S' not in self.not_wall():
             self.walls -= 0b0100
-        if 'W' in dir and 'W' not in self.not_wall():
+        elif dir == 'W' and 'W' not in self.not_wall():
             self.walls -= 0b1000
     
     def not_wall(self) -> list[str | None]:
@@ -66,22 +76,29 @@ class Maze:
 
     def perfect_maze(self):
         stack = []
+        visited = set()
+
         initial = (randint(0, self.l - 1), randint(0, self.w - 1))
         pos = [initial[0], initial[1]]
-        stack.append(pos) # stack of lists of position
-        while pos:
-            # temp = (pos[0], pos[1])
-            try:
-                next = choice(self.can_pass_through(pos, stack))
-            # if next:
+
+        stack.append(pos[:]) # stack of lists of position
+        visited.add(tuple(pos))
+
+        while stack:
+            pos = stack[-1][:]
+            print(pos)
+            print(stack)
+            print_maze(self.m)
+            dir = self.can_pass_through(pos, visited)
+            if dir:
+                next = choice(dir)
                 self.m[pos[1]][pos[0]].remove_wall(next)
-                pos = self.update_pos(pos, next)
-                stack.append(pos)
-            except IndexError:
+                new = self.update_pos(pos, next)
+                self.m[new[1]][new[0]].remove_wall(next, reverse=True)
+                stack.append(new[:])
+                visited.add(tuple(new[:]))
+            else:
                 stack.pop(-1)
-                pos = stack[-1]
-            if self.is_same(pos, initial):
-                pos = []
                 
     def update_pos(self, pos: list, dir: str) -> list:
         if dir == 'N':
@@ -94,30 +111,38 @@ class Maze:
             pos[0] -= 1
         return pos
 
-    def can_pass_through(self, pos: list, stack: list) -> list:
+    def can_pass_through(self, pos: list, stack: set) -> list:
         r = []
-        n = []
+        n = ()
         if pos[1] > 0:
             n = self.m[pos[1] - 1][pos[0]].pos
-        e = []
+        e = ()
         if pos[0] < self.l - 1:
             e = self.m[pos[1]][pos[0] + 1].pos
-        s = []
+        s = ()
         if pos[1] < self.w - 1:
             s = self.m[pos[1] + 1][pos[0]].pos
-        w = []
+        w = ()
         if pos[0] > 0:
             w = self.m[pos[1]][pos[0] - 1].pos
 
-        if n and not any(p for p in stack if self.is_same(p, n)):
+        # print(n, e, s, w)
+        # print(stack)
+        if n and not any(p == n for p in stack):
+            print('je peux aller au nord!')
             r.append('N')
-        if e and not any(p for p in stack if self.is_same(p, e)):
+        # print(any(p for p in stack if self.is_same(p, e)))
+        if e and not any(p == e for p in stack):
+            print('et a l est!')
             r.append('E')
-        if s and not any(p for p in stack if self.is_same(p, s)):
+        # print(any(p for p in stack if self.is_same(p, s)))
+        if s and not any(p == s for p in stack):
+            print('et au sud!')
             r.append('S')
-        if w and not any(p for p in stack if self.is_same(p, w)):
+        # print(any(p for p in stack if self.is_same(p, w)))
+        if w and not any(p == w for p in stack):
+            print('et a l ouest!')
             r.append('W')
-
         return r
 
     @staticmethod
@@ -139,7 +164,7 @@ def print_maze(maze):
     print()
 
 
-def generator():
+def generator() -> list[list[Box]]:
     # maze = [
     #     [13, 5, 3],
     #     [5, 3, 10],
@@ -147,13 +172,13 @@ def generator():
     # ]
     end = (0, 1) # x, y
     start = (0, 0)
-    width = 3
-    length = 3
+    width = 4
+    length = 4
     maze = Maze(width, length, start, end, True)
-    maze.generate()
     print_maze(maze.m)
     maze.generate()
     print_maze(maze.m)
+    return maze.m
 
 
 if __name__ == "__main__":
