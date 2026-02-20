@@ -7,15 +7,15 @@ class Box:
         self.pos = (x, y)
         self.walls = 0b1111
 
-    def add_wall(self, dir: list | str) -> None:
-        if 'N' in dir and 'N' in self.not_wall():
-            self.walls += 0b0001
-        if 'E' in dir and 'E' in self.not_wall():
-            self.walls += 0b0010
-        if 'S' in dir and 'S' in self.not_wall():
-            self.walls += 0b0100
-        if 'W' in dir and 'W' in self.not_wall():
-            self.walls += 0b1000
+    # def add_wall(self, dir: list | str) -> None:
+    #     if 'N' in dir and 'N' in self.not_wall():
+    #         self.walls += 0b0001
+    #     if 'E' in dir and 'E' in self.not_wall():
+    #         self.walls += 0b0010
+    #     if 'S' in dir and 'S' in self.not_wall():
+    #         self.walls += 0b0100
+    #     if 'W' in dir and 'W' in self.not_wall():
+    #         self.walls += 0b1000
 
     def remove_wall(self, dir: str, reverse: bool = False) -> None:
         if reverse is True:
@@ -36,16 +36,16 @@ class Box:
             self.walls -= 0b0100
         elif dir == 'W' and 'W' not in self.not_wall():
             self.walls -= 0b1000
-    
+
     def not_wall(self) -> list[str | None]:
         m = []
-        if self.walls % 2 == 0:
+        if int(self.walls % 2) == 0:
             m.append('N')
-        if int(self.walls / 2) % 2 == 0:
+        if int(self.walls / 2 % 2) == 0:
             m.append('E')
-        if int(self.walls / 4) % 2 == 0:
+        if int(self.walls / 4 % 2) == 0:
             m.append('S')
-        if int(self.walls / 8) % 2 == 0:
+        if int(self.walls / 8 % 2) == 0:
             m.append('W')
         return m
 
@@ -86,9 +86,6 @@ class Maze:
 
         while stack:
             pos = stack[-1][:]
-            # print(pos)
-            # print(stack)
-            # print_maze(self.m)
             dir = self.can_pass_through(pos, visited)
             if dir:
                 next = choice(dir)
@@ -165,15 +162,10 @@ def print_maze(maze: list[list[Box]]):
 
 
 def generator() -> list[list[Box]]:
-    # maze = [
-    #     [13, 5, 3],
-    #     [5, 3, 10],
-    #     [13, 4, 6],
-    # ]
     end = (0, 1) # x, y
     start = (0, 0)
-    width = 4
-    length = 4
+    width = 15
+    length = 15
     maze = Maze(width, length, start, end, True)
     # print_maze(maze.m)
     maze.generate()
