@@ -172,8 +172,8 @@ def generator() -> list[list[Box]]:
     # ]
     end = (0, 1) # x, y
     start = (0, 0)
-    width = 10
-    length = 10
+    width = 4
+    length = 4
     maze = Maze(width, length, start, end, True)
     # print_maze(maze.m)
     maze.generate()
