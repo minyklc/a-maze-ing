@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import sys
+
 
 n = 0b1111
 r = 0b1111 / 2
@@ -20,6 +22,9 @@ print(pos[0] == next_pos[0], pos[1] == next_pos[1])
 
 
 print(int(13 / 4 % 2))
+
+data = sys.stdin.read()
+print(data)
 
 # print( '▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎▄︎')
 # print( '█', '  ', '█  █  █  █  █  █  █  █', sep='')

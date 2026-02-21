@@ -1,63 +1,52 @@
 #!/usr/bin/env python3
-from generator import Box, generator, print_maze
+from generator import generator, Box
+# from display import print_maze
 
 
-class DisplayMaze:
-    def __init__(self, maze: list[list[Box]], color: int):
-        self.w = len(maze)
-        self.l = len(maze[0])
-        self.maze = maze
-        self.display = []
-        self.color = color
-        self.pos = [0, 0]
-    
-    def createdisp(self):
-        self.toprow()
-        return self.display
-
-    def toprow(self):
-        tr = '▄︎▄︎▄︎' * self.l + '▄︎'
-        self.display.append(tr)
-    
-    def eachrow(self):
-        ...
-    
-    def lastrow(self):
-        tr = '▀︎▀︎▀︎' * self.l + '▀︎'
-        self.display.append(tr)
+class Color:
+    def __init__(self):
+        self.white = '\033[107m  \0'
+        self.cyan = '\033[106m  \0'
+        self.purple = '\033[105m  \0'
+        self.blue = '\033[104m  \0'
+        self.yellow = '\033[103m  \0'
+        self.green = '\033[102m  \0'
+        self.red = '\033[101m  \0'
+        self.black = '\033[100m  \0'
+        self.cell = '\033[0m  \0'
+        self.void = '\033[0m'
 
 
 def display(maze: list[list[Box]]):
-    # print_maze(maze)
-    temp = maze[:][:]
-    for i in range(len(maze)):
-        for j in range(len(maze[0])):
-            if temp[i][j].walls < 10:
-                temp[i][j].walls = int(hex(temp[i][j].walls).split('x')[-1])
-            else:
-                temp[i][j].walls = hex(temp[i][j].walls).split('x')[-1].capitalize()
-    print_maze(temp)
-    
-    display = DisplayMaze(maze, 0)
-    for r in display.createdisp():
-        print(r)
-
-    # c = Console()
-    # c.print("┏━┳━┓")
-    # c.print("║   ║")
-    # c.print("╚═══╝")
-    # print()
-    # print("┏━┳━┓")
-    # print("┣━╋━┫")
-    # print("┗━┻━┛")
-    # maze2 = [
-    #     ['┏', '━', '━', '━', '━', '━','┓'],
-    #     ['┣', '━', '━', '━', '━', '┓', '┃'],
-    #     ['┣', '━', '━', ' ', '━', '┛', '┫'],
-    #     ['┗', '━', '━', '┻', '━', '━', '┛'],
-    # ]
-    # print()
+    c = Color()
+    color = c.red
+    # print(f"{c.green * (len(maze[0]) * 2 + 1)}")
+    top = color * (len(maze[0]) * 2 + 1) + c.void
+    print(top)
+    for y in range(len(maze)):
+        line = color
+        bottom = color
+        for x in range(len(maze[0])):
+            cell = maze[y][x]
+            line += c.cell + color if 'E' not in cell.not_wall() else c.cell * 2
+            bottom += color * 2 if 'S' not in cell.not_wall() else c.cell + color
+            # print(cell.walls, cell.not_wall())
+        print(line, c.void, sep='')
+        print(bottom, c.void, sep='')
+    # print(top)
 
 
-if __name__ == "__main__":
-    display(generator())
+if __name__ == '__main__':
+    ...
+    # maze = generator()
+    # temp = maze[:][:]
+    # with open('output.txt', 'w') as f:
+    #     for i in range(len(temp)):
+    #         for j in range(len(temp[0])):
+    #             if temp[i][j].walls < 10:
+    #                 f.write(f'{int(hex(temp[i][j].walls).split('x')[-1])} ')
+    #             else:
+    #                 f.write(f'{hex(temp[i][j].walls).split('x')[-1].capitalize()} ')
+    #         f.write('\n')
+    # # print_maze(temp)
+    # display(maze)

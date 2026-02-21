@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from random import random, randint, choice
+from random import randint, choice
 
 
 class Box:
@@ -7,15 +7,15 @@ class Box:
         self.pos = (x, y)
         self.walls = 0b1111
 
-    # def add_wall(self, dir: list | str) -> None:
-    #     if 'N' in dir and 'N' in self.not_wall():
-    #         self.walls += 0b0001
-    #     if 'E' in dir and 'E' in self.not_wall():
-    #         self.walls += 0b0010
-    #     if 'S' in dir and 'S' in self.not_wall():
-    #         self.walls += 0b0100
-    #     if 'W' in dir and 'W' in self.not_wall():
-    #         self.walls += 0b1000
+    def add_wall(self, dir: list | str) -> None:
+        if 'N' in dir and 'N' in self.not_wall():
+            self.walls += 0b0001
+        if 'E' in dir and 'E' in self.not_wall():
+            self.walls += 0b0010
+        if 'S' in dir and 'S' in self.not_wall():
+            self.walls += 0b0100
+        if 'W' in dir and 'W' in self.not_wall():
+            self.walls += 0b1000
 
     def remove_wall(self, dir: str, reverse: bool = False) -> None:
         if reverse is True:
@@ -154,24 +154,36 @@ class Maze:
 
 def print_maze(maze: list[list[Box]]):
     for n in maze:
-        # print(n)
         for b in n:
             print(b.walls, end=' ')
         print()
     print()
 
 
-def generator() -> list[list[Box]]:
-    end = (0, 1) # x, y
-    start = (0, 0)
-    width = 15
-    length = 15
-    maze = Maze(width, length, start, end, True)
-    # print_maze(maze.m)
+def maze_output(maze: list[list[Box]], file: str):
+    with open(file, 'w') as f:
+        for i in range(len(maze)):
+            for j in range(len(maze[0])):
+                if maze[i][j].walls < 10:
+                    f.write(f'{int(hex(maze[i][j].walls).split('x')[-1])} ')
+                else:
+                    f.write(f'{hex(maze[i][j].walls).split('x')[-1].capitalize()} ')
+            f.write('\n')
+
+
+def generator(param: dict) -> list[list[Box]]:
+    start = param['entry'] # x, y
+    end = param['exit']
+    length = param['width']
+    height = param['height']
+    state = param['perfect']
+    maze = Maze(height, length, start, end, state)
     maze.generate()
     # print_maze(maze.m)
+    maze_output(maze.m, param['output_file'])
     return maze.m
 
 
 if __name__ == "__main__":
-    generator()
+    ...
+    # generator()
