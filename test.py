@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import sys
 
-
 n = 0b1111
 r = 0b1111 / 2
 r = int(r)

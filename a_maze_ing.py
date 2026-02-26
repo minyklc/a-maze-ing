@@ -1,37 +1,11 @@
 #!/usr/bin/env python3
 import sys
-import curses
 import os
+import termios
+import tty
 from generator import Box, generator
 from display import display
 from parsing import parsing
-
-
-def play(stdscr):
-    curses.curs_set(0)
-    stdscr.keypad(True)
-    while True:
-        stdscr.clear()
-        stdscr.addstr("Use arrows, press q to quit\n")
-        stdscr.refresh()
-
-        key = stdscr.getch()
-
-        if key == ord('q'):
-            break
-        elif key == curses.KEY_UP:
-            stdscr.addstr("UP pressed\n")
-        elif key == curses.KEY_DOWN:
-            stdscr.addstr("DOWN pressed\n")
-        elif key == curses.KEY_RIGHT:
-            print("RIGHT pressed\n")
-        elif key == curses.KEY_LEFT:
-            stdscr.addstr("LEFT pressed\n")
-        else:
-            stdscr.addstr("Other key\n")
-
-        stdscr.refresh()
-        curses.napms(100)
 
 
 def up(pos: list[int], maze: list[list[Box]]) -> int:
@@ -62,60 +36,107 @@ def right(pos: list[int], maze: list[list[Box]]) -> int:
     return 1
 
 
-def ft_interface(maze):
-    entry = [0, 0]
-    exit = [15, 15]
+def ft_interface(maze: list[list[Box]], entry: list[int], exit: list[int]):
     pos = entry[:]
+    fd = 0
+    stt = termios.tcgetattr(fd)
 
     os.system('clear')
-    display(maze)
+    display(maze, pos)
+    # print(pos)
     print()
     print('up down right left or q')
-    for line in sys.stdin:
-        os.system('clear')
-        display(maze)
-        print()
-        print('up down right left or q')
-        if line.rstrip() == 'q':
-            break
-        elif line.rstrip() == 'play':
-            curses.wrapper(play)
-        elif line.rstrip() == 'print':
-            print(pos)
+    
+    try:
+        tty.setcbreak(fd)
+    
+        while pos != exit:
+            ch1 = sys.stdin.read(1)
+            if ch1 == 'q':
+                break
+            elif ch1 == '\x1b':
+                ch2 = sys.stdin.read(1)
+                ch3 = sys.stdin.read(1)
+    
+                if ch2 == '[':
+                    if ch3 == 'A': #up
+                        if up(pos, maze) == 1:
+                            pos[1] -= 1
+                            # print(pos)
+                    elif ch3 == 'B': #down
+                        if down(pos, maze) == 1:
+                            pos[1] += 1
+                            # print(pos)
+                    elif ch3 == 'C': #right
+                        if right(pos, maze) == 1:
+                            pos[0] += 1
+                            # print(pos)
+                    elif ch3 == 'D': #left
+                        if left(pos, maze) == 1:
+                            pos[0] -= 1
+                            # print(pos)
+            os.system('clear')
+            display(maze, pos)
+            # print(pos)
+            print()
+            print('up down right left or q')
 
-        elif line.rstrip() == '\x1b[A': #up
-            if up(pos, maze) == 0:
-                print('not this way!')
-            else:
-                pos[1] -= 1
-                print(pos)
+        if pos == exit:
+            print('congratulation !')
+    
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, stt)
 
-        elif line.rstrip() == '\x1b[B': #down
-            if down(pos, maze) == 0:
-                print('not this way!')
-            else:
-                pos[1] += 1
-                print(pos)
+    # os.system('clear')
+    # display(maze)
+    # print()
+    # print('up down right left or q')
+    
+    # for line in sys.stdin:
+    #     os.system('clear')
+    #     display(maze)
+    #     print()
+    #     print('up down right left or q')
+    #     if line.rstrip() == 'q':
+    #         break
+    #     elif line.rstrip() == 'play':
+    #         curses.wrapper(play)
+    #     elif line.rstrip() == 'print':
+    #         print(pos)
 
-        elif line.rstrip() == '\x1b[C': #right
-            if right(pos, maze) == 0:
-                print('not this way!')
-            else:
-                pos[0] += 1
-                print(pos)
+    #     elif line.rstrip() == '\x1b[A': #up
+    #         if up(pos, maze) == 0:
+    #             print('not this way!')
+    #         else:
+    #             pos[1] -= 1
+    #             print(pos)
 
-        elif line.rstrip() == '\x1b[D': #left
-            if left(pos, maze) == 0:
-                print('not this way!')
-            else:
-                pos[0] -= 1
-                print(pos)
+    #     elif line.rstrip() == '\x1b[B': #down
+    #         if down(pos, maze) == 0:
+    #             print('not this way!')
+    #         else:
+    #             pos[1] += 1
+    #             print(pos)
 
-        if exit == pos:
-            print('maze completed!')
-            break
-        else:
-            print('please select another key...')
+    #     elif line.rstrip() == '\x1b[C': #right
+    #         if right(pos, maze) == 0:
+    #             print('not this way!')
+    #         else:
+    #             pos[0] += 1
+    #             print(pos)
+
+    #     elif line.rstrip() == '\x1b[D': #left
+    #         if left(pos, maze) == 0:
+    #             print('not this way!')
+    #         else:
+    #             pos[0] -= 1
+    #             print(pos)
+
+    #     if exit == pos:
+    #         print('maze completed!')
+    #         break
+    #     else:
+    #         print('please select another key...')
 
     print("Exited")
 
@@ -135,23 +156,25 @@ def main():
     maze = generator(param)
     os.system('clear')
     display(maze)
+    print()
     interaction()
     for line in sys.stdin:
-        os.system('clear')
-        display(maze)
-        interaction()
         if line.rstrip() == 'q':
             break
-        elif line.rstrip() == '1':
+        elif line.rstrip() == '1': #regenerate maze
             maze = generator(param)
-        elif line.rstrip() == '2':
+        elif line.rstrip() == '2': #show/hide shortest path
             ...
-        elif line.rstrip() == '3':
+        elif line.rstrip() == '3': #change wall color
             ...
-        elif line.rstrip() == '4':
-            ft_interface(maze)
+        elif line.rstrip() == '4': #play the maze
+            ft_interface(maze, param['entry'], param['exit'])
         else :
             print('please select another key...')
+        os.system('clear')
+        display(maze)
+        print()
+        interaction()
     
     print("Exit")
 

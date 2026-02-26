@@ -13,11 +13,12 @@ class Color:
         self.green = '\033[102m  \0'
         self.red = '\033[101m  \0'
         self.black = '\033[100m  \0'
+        self.pos = '\033[100m  \0'
         self.cell = '\033[0m  \0'
         self.void = '\033[0m'
 
 
-def display(maze: list[list[Box]]):
+def display(maze: list[list[Box]], pos: None | list[int] = None):
     c = Color()
     color = c.red
     # print(f"{c.green * (len(maze[0]) * 2 + 1)}")
@@ -28,7 +29,13 @@ def display(maze: list[list[Box]]):
         bottom = color
         for x in range(len(maze[0])):
             cell = maze[y][x]
-            line += c.cell + color if 'E' not in cell.not_wall() else c.cell * 2
+            if pos is not None:
+                if pos[0] == x and pos[1] == y:
+                    line += c.pos + color if 'E' not in cell.not_wall() else c.pos + c.cell
+                else:
+                    line += c.cell + color if 'E' not in cell.not_wall() else c.cell * 2
+            else:
+                line += c.cell + color if 'E' not in cell.not_wall() else c.cell * 2
             bottom += color * 2 if 'S' not in cell.not_wall() else c.cell + color
             # print(cell.walls, cell.not_wall())
         print(line, c.void, sep='')
