@@ -59,6 +59,7 @@ class Maze:
         self.s = start
         self.e = end
         self.m = self.blank_maze(width, length)
+        self.ft = self.forty_two(width, length)
 
     def blank_maze(self, width: int, length: int) -> list[list[Box]]:
         maze = []
@@ -67,6 +68,29 @@ class Maze:
             for b in range(length):
                 maze[n].append(Box(b, n))
         return maze
+
+    def forty_two(self, width, length) -> list[list[int]] | list:
+        total = []
+
+        if width >= 7 and length >= 9:
+            pos_x = int((length - 7) / 2)
+            pos_y = int((width - 5) / 2)
+            x = pos_x
+            y = pos_y
+            menu = [
+                [0, 4, 1, 1],
+                [0, 6],
+                [0, 1, 1, 2, 1, 1],
+                [2, 2],
+                [2, 2, 1, 1]
+            ]
+            for m in menu:
+                for i in m:
+                    x += i
+                    total.append([x, y])
+                x = pos_x
+                y += 1
+        return total
 
     def generate(self):
         if self.p is True:
@@ -83,6 +107,10 @@ class Maze:
 
         stack.append(pos[:]) # stack of lists of position
         visited.add(tuple(pos))
+        if self.ft != []:
+            for p in self.ft:
+                if p is not None:
+                    visited.add(tuple(p))
 
         while stack:
             pos = stack[-1][:]
@@ -171,7 +199,7 @@ def maze_output(maze: list[list[Box]], file: str):
             f.write('\n')
 
 
-def generator(param: dict) -> list[list[Box]]:
+def generator(param: dict) -> Maze:
     start = param['entry'] # x, y
     end = param['exit']
     length = param['width']
@@ -181,7 +209,7 @@ def generator(param: dict) -> list[list[Box]]:
     maze.generate()
     # print_maze(maze.m)
     maze_output(maze.m, param['output_file'])
-    return maze.m
+    return maze
 
 
 if __name__ == "__main__":
