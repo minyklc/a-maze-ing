@@ -105,8 +105,8 @@ class Maze:
         initial = (randint(0, self.l - 1), randint(0, self.w - 1))
         pos = [initial[0], initial[1]]
 
-        stack.append(pos[:]) # stack of lists of position
-        visited.add(tuple(pos))
+        stack.append(pos[:]) # stack of list of positions -> actual way
+        visited.add(tuple(pos)) # all visited positions
         if self.ft != []:
             for p in self.ft:
                 if p is not None:
@@ -151,22 +151,13 @@ class Maze:
         if pos[0] > 0:
             w = self.m[pos[1]][pos[0] - 1].pos
 
-        # print(n, e, s, w)
-        # print(stack)
         if n and not any(p == n for p in stack):
-            # print('je peux aller au nord!')
             r.append('N')
-        # print(any(p for p in stack if self.is_same(p, e)))
         if e and not any(p == e for p in stack):
-            # print('et a l est!')
             r.append('E')
-        # print(any(p for p in stack if self.is_same(p, s)))
         if s and not any(p == s for p in stack):
-            # print('et au sud!')
             r.append('S')
-        # print(any(p for p in stack if self.is_same(p, w)))
         if w and not any(p == w for p in stack):
-            # print('et a l ouest!')
             r.append('W')
         return r
 
@@ -188,30 +179,29 @@ def print_maze(maze: list[list[Box]]):
     print()
 
 
-def maze_output(maze: list[list[Box]], file: str):
+def maze_output(maze: Maze, file: str):
     with open(file, 'w') as f:
-        for i in range(len(maze)):
-            for j in range(len(maze[0])):
-                if maze[i][j].walls < 10:
-                    f.write(f'{int(hex(maze[i][j].walls).split('x')[-1])} ')
+        for i in range(len(maze.m)):
+            for j in range(len(maze.m[0])):
+                if maze.m[i][j].walls < 10:
+                    f.write(f'{int(hex(maze.m[i][j].walls).split('x')[-1])} ')
                 else:
-                    f.write(f'{hex(maze[i][j].walls).split('x')[-1].capitalize()} ')
+                    f.write(f'{hex(maze.m[i][j].walls).split('x')[-1].capitalize()} ')
             f.write('\n')
+        f.write(f"{maze.w}")
 
 
 def generator(param: dict) -> Maze:
     start = param['entry'] # x, y
     end = param['exit']
-    length = param['width']
+    width = param['width']
     height = param['height']
     state = param['perfect']
-    maze = Maze(height, length, start, end, state)
+    maze = Maze(height, width, start, end, state)
     maze.generate()
-    # print_maze(maze.m)
-    maze_output(maze.m, param['output_file'])
+    maze_output(maze, param['output_file'])
     return maze
 
 
 if __name__ == "__main__":
     ...
-    # generator()

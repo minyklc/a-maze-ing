@@ -10,28 +10,28 @@ from parsing import parsing
 
 def up(pos: list[int], maze: list[list[Box]]) -> int:
     n = [1, 3, 5, 7, 9, 11, 13, 15]
-    if any(n == maze[pos[1]][pos[0]].walls for n in n):
+    if any(nb == maze[pos[1]][pos[0]].walls for nb in n):
         return 0
     return 1
 
 
 def down(pos: list[int], maze: list[list[Box]]) -> int:
     n = [4, 5, 6, 7, 12, 13, 14, 15]
-    if any(n == maze[pos[1]][pos[0]].walls for n in n):
+    if any(nb == maze[pos[1]][pos[0]].walls for nb in n):
         return 0
     return 1
 
 
 def left(pos: list[int], maze: list[list[Box]]) -> int:
     n = [8, 9, 10, 11, 12, 13, 14, 15]
-    if any(n == maze[pos[1]][pos[0]].walls for n in n):
+    if any(nb == maze[pos[1]][pos[0]].walls for nb in n):
         return 0
     return 1
 
 
 def right(pos: list[int], maze: list[list[Box]]) -> int:
     n = [2, 3, 6, 7, 10, 11, 14, 15]
-    if any(n == maze[pos[1]][pos[0]].walls for n in n):
+    if any(nb == maze[pos[1]][pos[0]].walls for nb in n):
         return 0
     return 1
 
@@ -92,7 +92,13 @@ def interaction():
 
 def main() -> None:
 
-    param = parsing()
+    args = sys.argv
+    if len(args) != 2:
+        print('expected input> python3 a_maze_ing.py config.txt')
+        return
+    param = parsing(args[1])
+    if param == {}:
+        return
     maze = generator(param)
     os.system('clear')
     display(maze.m, maze.ft)

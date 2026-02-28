@@ -6,13 +6,19 @@ from generator import Box
 
 class Color:
     def __init__(self):
-        self.white = '\033[107m  \0'
-        self.cyan = '\033[106m  \0'
-        self.purple = '\033[105m  \0'
-        self.blue = '\033[104m  \0'
-        self.yellow = '\033[103m  \0'
-        self.green = '\033[102m  \0'
-        self.red = '\033[101m  \0'
+        self.white = '\033[47m  \0'
+        self.lightcyan = '\033[106m  \0'
+        self.cyan = '\033[46m  \0'
+        self.lightpurple = '\033[105m  \0'
+        self.purple = '\033[45m  \0'
+        self.lightblue = '\033[104m  \0'
+        self.blue = '\033[44m  \0'
+        self.lightyellow = '\033[103m  \0'
+        self.yellow = '\033[43m  \0'
+        self.lightgreen = '\033[102m  \0'
+        self.green = '\033[42m  \0'
+        self.lightred = '\033[101m  \0'
+        self.red = '\033[41m  \0'
         self.black = '\033[100m  \0'
         # self.pos = '\033[100m  \0'
         self.cell = '\033[0m  \0'
@@ -40,7 +46,7 @@ def display(maze: list[list[Box]],
             elif end is not None and end[0] == x and end[1] == y:
                 line += c.purple + color if 'E' not in cell.not_wall() else c.purple + c.cell
             elif forty_two != [None] and any(cell.pos == tuple(c) for c in forty_two if c is not None):
-                line += c.white + color if 'E' not in cell.not_wall() else c.cell * 2
+                line += c.lightred + color if 'E' not in cell.not_wall() else c.cell * 2
             else:
                 line += c.cell + color if 'E' not in cell.not_wall() else c.cell * 2
             bottom += color * 2 if 'S' not in cell.not_wall() else c.cell + color
