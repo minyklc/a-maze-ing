@@ -3,34 +3,35 @@ import sys
 import os
 import termios
 import tty
+import random
 from generator import Box, Maze, generator
 from display import display
 from parsing import parsing
 
 
 def up(pos: list[int], maze: list[list[Box]]) -> int:
-    n = [1, 3, 5, 7, 9, 11, 13, 15]
+    n = (1, 3, 5, 7, 9, 11, 13, 15)
     if any(nb == maze[pos[1]][pos[0]].walls for nb in n):
         return 0
     return 1
 
 
 def down(pos: list[int], maze: list[list[Box]]) -> int:
-    n = [4, 5, 6, 7, 12, 13, 14, 15]
+    n = (4, 5, 6, 7, 12, 13, 14, 15)
     if any(nb == maze[pos[1]][pos[0]].walls for nb in n):
         return 0
     return 1
 
 
 def left(pos: list[int], maze: list[list[Box]]) -> int:
-    n = [8, 9, 10, 11, 12, 13, 14, 15]
+    n = (8, 9, 10, 11, 12, 13, 14, 15)
     if any(nb == maze[pos[1]][pos[0]].walls for nb in n):
         return 0
     return 1
 
 
 def right(pos: list[int], maze: list[list[Box]]) -> int:
-    n = [2, 3, 6, 7, 10, 11, 14, 15]
+    n = (2, 3, 6, 7, 10, 11, 14, 15)
     if any(nb == maze[pos[1]][pos[0]].walls for nb in n):
         return 0
     return 1
@@ -42,7 +43,7 @@ def ft_interface(maze: Maze, entry: list[int], exit: list[int]):
     stt = termios.tcgetattr(fd)
 
     os.system('clear')
-    display(maze.m, maze.ft, pos, maze.s, maze.e)
+    display(maze.m, maze.ft, False, pos, maze.s, maze.e)
     print()
     print('up down right left or q')
     
@@ -71,7 +72,7 @@ def ft_interface(maze: Maze, entry: list[int], exit: list[int]):
                         if left(pos, maze.m) == 1:
                             pos[0] -= 1
             os.system('clear')
-            display(maze.m, maze.ft, pos, maze.s, maze.e)
+            display(maze.m, maze.ft, False, pos, maze.s, maze.e)
             print()
             print('up down right left or q')
         if pos == exit:
@@ -91,23 +92,29 @@ def interaction():
 
 
 def main() -> None:
-
     args = sys.argv
     if len(args) != 2:
-        print('expected input> python3 a_maze_ing.py config.txt')
+        print('expected execution> python3 a_maze_ing.py config.txt')
         return
     param = parsing(args[1])
     if param == {}:
         return
     maze = generator(param)
+    if 'animation' in param.keys():
+        anim = True if param['animation'] else False
+    else:
+        anim = False
+
     os.system('clear')
-    display(maze.m, maze.ft)
+    display(maze.m, maze.ft, anim)
+    print(f'seed: {maze.d}', maze.sv)
     print()
     interaction()
     for line in sys.stdin:
         if line.rstrip() == 'q':
             break
-        elif line.rstrip() == '1': #regenerate maze
+        elif line.rstrip() == '1': #regenerate random maze
+            param['seed'] = random.randint(0, 2147483647)
             maze = generator(param)
         elif line.rstrip() == '2': #show/hide shortest path
             ...
@@ -118,7 +125,8 @@ def main() -> None:
         else :
             print('please select another key...')
         os.system('clear')
-        display(maze.m, maze.ft)
+        display(maze.m, maze.ft, anim)
+        print(f'seed: {maze.d}')
         print()
         interaction()
     

@@ -40,7 +40,7 @@ def parsing(file: str) -> dict:
     try:
         with open(file, 'r') as f:
             for line in f:
-                if not line.startswith('#'):
+                if not line.startswith('#') and not line.isspace():
                     i = line.find('=')
                     if i == -1:
                         raise NameError
@@ -72,7 +72,8 @@ def parsing(file: str) -> dict:
     try:
         r['width'] = int(r['width'])
         r['height'] = int(r['height'])
-        if r['width'] < 2 or r['height'] < 2:
+        if r['width'] < 2 or r['height'] > 2147483647 \
+            or r['height'] < 2 or r['width'] > 2147483647:
             raise ValueError
 
         i = r['entry'].find(',')
@@ -94,6 +95,14 @@ def parsing(file: str) -> dict:
             r['perfect'] = True
         else:
             r['perfect'] = False
+
+        if 'seed' in r.keys() and r['seed'].isdigit():
+            r['seed'] = int(r['seed'])
+        
+        if 'animation' in r.keys() and r['animation'].lower() == 'true':
+            r['animation'] = True
+        elif 'animation' in r.keys():
+            r['animation'] = False
         return r
     except ValueError as v:
         print('error')

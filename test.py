@@ -6,21 +6,29 @@ r = 0b1111 / 2
 r = int(r)
 print(r)
 
+test = "     \n   "
+print(test.isspace())
+
+stack = []
+
+while stack:
+    print('ubfdehcnikvfhu')
+
 pos = [0, 1]
 stack = [[0, 1], [1, 0]]
 print(pos == stack[0])
 print(pos[:])
 
-pos = 0
-if pos:
-    print(0)
+# pos = 0
+# if pos:
+#     print(0)
 
-pos = (0, 1)
-next_pos = [0, 1]
-print(pos[0] == next_pos[0], pos[1] == next_pos[1])
+# pos = (0, 1)
+# next_pos = [0, 1]
+# print(pos[0] == next_pos[0], pos[1] == next_pos[1])
 
 
-print(int(13 / 4 % 2))
+# print(int(13 / 4 % 2))
 
-data = sys.stdin.read()
-print(data)
+# data = sys.stdin.read()
+# print(data)

@@ -1,8 +1,11 @@
 # mandatory keys
-WIDTH=10
-HEIGHT=10
-ENTRY=02,1
-EXIT=0,6
+WIDTH=20
+HEIGHT=20
+ENTRY=0, 0
+EXIT=19,19
 OUTPUT_FILE=output.txt
 PERFECT=True
-#additional keys
+
+# additional keys
+SEED=-1328736569
+#ANIMATION=True
