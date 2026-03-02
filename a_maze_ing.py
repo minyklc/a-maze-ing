@@ -37,13 +37,14 @@ def right(pos: list[int], maze: list[list[Box]]) -> int:
     return 1
 
 
-def ft_interface(maze: Maze, entry: list[int], exit: list[int]):
+def ft_interface(maze: Maze, entry: list[int],
+                 exit: list[int], path: list[list[int]]):
     pos = entry[:]
     fd = 0
     stt = termios.tcgetattr(fd)
 
     os.system('clear')
-    display(maze.m, maze.ft, False, pos, maze.s, maze.e)
+    display(maze.m, maze.ft, path, False, pos, maze.s, maze.e)
     print()
     print('up down right left or q')
     
@@ -72,7 +73,7 @@ def ft_interface(maze: Maze, entry: list[int], exit: list[int]):
                         if left(pos, maze.m) == 1:
                             pos[0] -= 1
             os.system('clear')
-            display(maze.m, maze.ft, False, pos, maze.s, maze.e)
+            display(maze.m, maze.ft, path, False, pos, maze.s, maze.e)
             print()
             print('up down right left or q')
         if pos == exit:
@@ -104,10 +105,11 @@ def main() -> None:
         anim = True if param['animation'] else False
     else:
         anim = False
+    path = []
 
     os.system('clear')
-    display(maze.m, maze.ft, anim)
-    print(f'seed: {maze.d}', maze.sv)
+    display(maze.m, maze.ft, path, anim)
+    print(f'seed: {maze.d}, {maze.sv}')
     print()
     interaction()
     for line in sys.stdin:
@@ -117,15 +119,18 @@ def main() -> None:
             param['seed'] = random.randint(0, 2147483647)
             maze = generator(param)
         elif line.rstrip() == '2': #show/hide shortest path
-            ...
+            if path:
+                path = []
+            else:
+                path = maze.sv
         elif line.rstrip() == '3': #change wall color
             ...
         elif line.rstrip() == '4': #play the maze
-            ft_interface(maze, param['entry'], param['exit'])
+            ft_interface(maze, param['entry'], param['exit'], path)
         else :
             print('please select another key...')
         os.system('clear')
-        display(maze.m, maze.ft, anim)
+        display(maze.m, maze.ft, path, anim)
         print(f'seed: {maze.d}')
         print()
         interaction()

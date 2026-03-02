@@ -25,10 +25,11 @@ class Color:
 
 def display(maze: list[list[Box]],
             forty_two: list | list[list[int]],
+            path: list | list[list[int]],
             animation: bool = False,
-            pos: None | list[int] = None, 
-            start: None | tuple[int, int] = None,
-            end: None | tuple[int, int] = None) -> None:
+            pos: None | list[int] = None,
+            start: None | list[int] = None,
+            end: None | list[int] = None) -> None:
 
     c = Color()
     color = c.red
@@ -45,11 +46,13 @@ def display(maze: list[list[Box]],
             if pos and pos[0] == x and pos[1] == y:
                 line += c.black + color if 'E' in cell.has_wall() else c.black + c.cell
             elif start and start[0] == x and start[1] == y:
-                line += c.green + color if 'E' in cell.has_wall() else c.green + c.cell
+                line += c.lightpurple + color if 'E' in cell.has_wall() else c.green + c.cell
             elif end and end[0] == x and end[1] == y:
                 line += c.purple + color if 'E' in cell.has_wall() else c.purple + c.cell
+            elif path and any(cell.pos == tuple(c) for c in path):
+                line += c.lightgreen + color if 'E' in cell.has_wall() else c.lightgreen + c.cell
             elif forty_two and any(cell.pos == tuple(c) for c in forty_two):
-                line += c.lightred + color if 'E' in cell.has_wall() else c.cell * 2
+                line += c.lightred + color
             else:
                 line += c.cell + color if 'E' in cell.has_wall() else c.cell * 2
             bottom += color * 2 if 'S' in cell.has_wall() else c.cell + color

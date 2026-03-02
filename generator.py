@@ -54,7 +54,7 @@ class Box:
 
 class Maze:
     def __init__(self, height: int, width: int,
-                 start: tuple, end: tuple,
+                 start: list, end: list,
                  perfect: bool,
                  seed: str | int = randint(0, 2147483647)):
         self.h = height
@@ -102,7 +102,7 @@ class Maze:
             self.perfect_maze()
         else:
             self.imperfect_maze()
-        self.sv = self.solver()
+        self.sv, self.dir = self.solver()
 
     def perfect_maze(self): #dfs
         stack = []
@@ -191,16 +191,33 @@ class Maze:
             t_stack = []
             while stack:
                 p = stack[0]
-                print('oui', p, stack)
+                # print('oui', p, stack)
                 dir = self.check_pass(p, visited)
                 if dir:
                     for d in dir:
                         tmp = self.update_pos(p[:], d)
                         t_stack.append(tmp[:])
+                        self.m[tmp[1]][tmp[0]].prev = p[:]
+                        self.m[tmp[1]][tmp[0]].dir = d
                 visited.add(tuple(p[:]))
                 stack.remove(p[:])
-                print('ma stack:', stack)
+                # print('ma stack:', stack)
             stack = t_stack
+        
+        path = []
+        directions = []
+        end = list(self.e)[:]
+        pos = self.m[end[1]][end[0]]
+        while list(pos.pos) != self.s:
+            path.append(list(pos.pos[:]))
+            directions.append(pos.dir)
+            # print(path)
+            pos = self.m[pos.prev[1]][pos.prev[0]]
+            # print(pos.pos)
+            # time.sleep(0.3)
+        directions.reverse()
+        path.reverse()
+        return path, directions
         
     def check_pass(self, pos: list[int], visited: set):
         dir = []
