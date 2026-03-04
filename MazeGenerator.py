@@ -71,8 +71,8 @@ class Maze:
                 maze[n].append(Box(b, n))
         return maze
 
-    def forty_two(self, height, width) -> list[list[int]] | list:
-        total = []
+    def forty_two(self, height, width) -> set[tuple[int]] | list:
+        total = set()
 
         if height >= 7 and width >= 9:
             pos_x = int((width - 7) / 2)
@@ -89,7 +89,7 @@ class Maze:
             for m in menu:
                 for i in m:
                     x += i
-                    total.append([x, y])
+                    total.add(tuple([x, y]))
                 x = pos_x
                 y += 1
         return total
