@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from generator import Box
+from MazeGenerator import Box
 import time
 
 
@@ -18,14 +18,15 @@ class Color:
         self.green = '\033[42m  \0'
         self.lightred = '\033[101m  \0'
         self.red = '\033[41m  \0'
-        self.black = '\033[100m  \0'
+        self.grey = '\033[100m  \0'
+        self.black = '\033[40m  \0'
         self.cell = '\033[0m  \0'
         self.void = '\033[0m'
 
 
 def display(maze: list[list[Box]],
             forty_two: list | list[list[int]],
-            path: list | list[list[int]],
+            path: set | set[list[int]],
             animation: bool = False,
             pos: None | list[int] = None,
             start: None | list[int] = None,
@@ -46,12 +47,12 @@ def display(maze: list[list[Box]],
             if pos and pos[0] == x and pos[1] == y:
                 line += c.black + color if 'E' in cell.has_wall() else c.black + c.cell
             elif start and start[0] == x and start[1] == y:
-                line += c.lightpurple + color if 'E' in cell.has_wall() else c.green + c.cell
-            elif end and end[0] == x and end[1] == y:
                 line += c.purple + color if 'E' in cell.has_wall() else c.purple + c.cell
-            elif path and any(cell.pos == tuple(c) for c in path):
-                line += c.lightgreen + color if 'E' in cell.has_wall() else c.lightgreen + c.cell
-            elif forty_two and any(cell.pos == tuple(c) for c in forty_two):
+            elif end and end[0] == x and end[1] == y:
+                line += c.lightpurple + color if 'E' in cell.has_wall() else c.lightpurple + c.cell
+            elif path and cell.pos in path:
+                line += c.grey + color if 'E' in cell.has_wall() else c.grey + c.cell
+            elif forty_two and list(cell.pos) in forty_two:
                 line += c.lightred + color
             else:
                 line += c.cell + color if 'E' in cell.has_wall() else c.cell * 2
@@ -59,10 +60,12 @@ def display(maze: list[list[Box]],
 
         if animation:
             time.sleep(0.05)
-        print(line, c.void, sep='')
+        print(f"{line+c.void}")
+        # print(line, c.void, sep='')
         if animation:
             time.sleep(0.05)
-        print(bottom, c.void, sep='')
+        # print(bottom, c.void, sep='')
+        print(f"{bottom+c.void}")
 
 
 if __name__ == '__main__':

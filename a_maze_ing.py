@@ -4,35 +4,36 @@ import os
 import termios
 import tty
 import random
-from generator import Box, Maze, generator
+from MazeGenerator import Maze, Box
+from generator import generator
 from display import display
 from parsing import parsing
 
 
 def up(pos: list[int], maze: list[list[Box]]) -> int:
-    n = (1, 3, 5, 7, 9, 11, 13, 15)
-    if any(nb == maze[pos[1]][pos[0]].walls for nb in n):
+    n = {1, 3, 5, 7, 9, 11, 13, 15}
+    if maze[pos[1]][pos[0]].walls in n:
         return 0
     return 1
 
 
 def down(pos: list[int], maze: list[list[Box]]) -> int:
     n = (4, 5, 6, 7, 12, 13, 14, 15)
-    if any(nb == maze[pos[1]][pos[0]].walls for nb in n):
+    if maze[pos[1]][pos[0]].walls in n:
         return 0
     return 1
 
 
 def left(pos: list[int], maze: list[list[Box]]) -> int:
     n = (8, 9, 10, 11, 12, 13, 14, 15)
-    if any(nb == maze[pos[1]][pos[0]].walls for nb in n):
+    if maze[pos[1]][pos[0]].walls in n:
         return 0
     return 1
 
 
 def right(pos: list[int], maze: list[list[Box]]) -> int:
     n = (2, 3, 6, 7, 10, 11, 14, 15)
-    if any(nb == maze[pos[1]][pos[0]].walls for nb in n):
+    if maze[pos[1]][pos[0]].walls in n:
         return 0
     return 1
 
@@ -45,7 +46,6 @@ def ft_interface(maze: Maze, entry: list[int],
 
     os.system('clear')
     display(maze.m, maze.ft, path, False, pos, maze.s, maze.e)
-    print()
     print('up down right left or q')
     
     try:
@@ -63,19 +63,27 @@ def ft_interface(maze: Maze, entry: list[int],
                     if ch3 == 'A': #up
                         if up(pos, maze.m) == 1:
                             pos[1] -= 1
+                            os.system('clear')
+                            display(maze.m, maze.ft, path, False, pos, maze.s, maze.e)
+                            print('up down right left or q')
                     elif ch3 == 'B': #down
                         if down(pos, maze.m) == 1:
                             pos[1] += 1
+                            os.system('clear')
+                            display(maze.m, maze.ft, path, False, pos, maze.s, maze.e)
+                            print('up down right left or q')
                     elif ch3 == 'C': #right
                         if right(pos, maze.m) == 1:
                             pos[0] += 1
+                            os.system('clear')
+                            display(maze.m, maze.ft, path, False, pos, maze.s, maze.e)
+                            print('up down right left or q')
                     elif ch3 == 'D': #left
                         if left(pos, maze.m) == 1:
                             pos[0] -= 1
-            os.system('clear')
-            display(maze.m, maze.ft, path, False, pos, maze.s, maze.e)
-            print()
-            print('up down right left or q')
+                            os.system('clear')
+                            display(maze.m, maze.ft, path, False, pos, maze.s, maze.e)
+                            print('up down right left or q')
         if pos == exit:
             print('congratulation !')
     finally:
@@ -84,7 +92,8 @@ def ft_interface(maze: Maze, entry: list[int],
 
 
 def interaction():
-    print('1 = regenerate new maze')
+    print()
+    print('1 = generate new maze')
     print('2 = show/hide the shortest path')
     print('3 = change wall colours')
     print('4 = play the maze')
@@ -109,8 +118,7 @@ def main() -> None:
 
     os.system('clear')
     display(maze.m, maze.ft, path, anim)
-    print(f'seed: {maze.d}, {maze.sv}')
-    print()
+    print(f'seed: {maze.d}')
     interaction()
     for line in sys.stdin:
         if line.rstrip() == 'q':
@@ -118,6 +126,8 @@ def main() -> None:
         elif line.rstrip() == '1': #regenerate random maze
             param['seed'] = random.randint(0, 2147483647)
             maze = generator(param)
+            if path:
+                path = maze.sv
         elif line.rstrip() == '2': #show/hide shortest path
             if path:
                 path = []
@@ -132,7 +142,6 @@ def main() -> None:
         os.system('clear')
         display(maze.m, maze.ft, path, anim)
         print(f'seed: {maze.d}')
-        print()
         interaction()
     
     print("Exit")

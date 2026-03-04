@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from random import randint
 
 
 def check_value(key: str, value: str) -> int:
@@ -98,6 +99,8 @@ def parsing(file: str) -> dict:
 
         if 'seed' in r.keys() and r['seed'].isdigit():
             r['seed'] = int(r['seed'])
+        if 'seed' not in r.keys():
+            r.update({'seed': randint(0, 2147483647)})
         
         if 'animation' in r.keys() and r['animation'].lower() == 'true':
             r['animation'] = True

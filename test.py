@@ -16,7 +16,8 @@ while stack:
 
 pos = [0, 1]
 stack = [[0, 1], [1, 0]]
-print(pos == stack[0])
+# print(pos == stack[0])
+print(pos)
 print(pos[:])
 
 # pos = 0
