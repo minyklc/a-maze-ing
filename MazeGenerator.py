@@ -28,15 +28,30 @@ class Box:
                 dir = 'W'
             elif dir == 'W':
                 dir = 'E'
+        walls = self.has_wall()
 
-        if dir == 'N' and 'N' in self.has_wall():
+        if dir == 'N' and 'N' in walls:
             self.walls -= 0b0001
-        elif dir == 'E' and 'E' in self.has_wall():
+        elif dir == 'E' and 'E' in walls:
             self.walls -= 0b0010
-        elif dir == 'S' and 'S' in self.has_wall():
+        elif dir == 'S' and 'S' in walls:
             self.walls -= 0b0100
-        elif dir == 'W' and 'W' in self.has_wall():
+        elif dir == 'W' and 'W' in walls:
             self.walls -= 0b1000
+    
+    def dead_end(self, width: int, height: int) -> str | None:
+        if self.walls == 0b0111 and self.pos[0] < width - 1: #east
+            self.walls -= 0b0010
+            return 'E'
+        elif self.walls == 0b1011 and self.pos[1] > 0: #north
+            self.walls -= 0b0001
+            return 'N'
+        elif self.walls == 0b1101 and self.pos[0] > 0: #west
+            self.walls -= 0b1000
+            return 'W'
+        elif self.walls == 0b1110 and self.pos[1] > height - 1: #south
+            self.walls -= 0b0100
+            return 'S'
 
     def has_wall(self) -> set[str | None]:
         m = set()
@@ -89,7 +104,7 @@ class Maze:
             for m in menu:
                 for i in m:
                     x += i
-                    total.add(tuple([x, y]))
+                    total.add((x, y))
                 x = pos_x
                 y += 1
         return total
@@ -116,14 +131,14 @@ class Maze:
                     visited.add(tuple(p))
 
         seed(self.d)
-        s = time.time()
-        r1 = int()
+        # s = time.time()
+        # r1 = int()
         while stack:
             pos = stack[-1][:]
-            s1 = time.time()
+            # s1 = time.time()
             dir = self.can_pass_through(pos, visited)
-            e1 = time.time()
-            r1 += e1 - s1
+            # e1 = time.time()
+            # r1 += e1 - s1
             if dir:
                 next = choice(dir)
                 self.m[pos[1]][pos[0]].remove_wall(next)
@@ -136,9 +151,9 @@ class Maze:
             # os.system('clear')
             # display(self.m, self.ft, [], False, pos, self.s, self.e)
             # time.sleep(0.05)
-        e = time.time()
-        print(e-s)
-        print(r1)
+        # e = time.time()
+        # print(e-s)
+        # print(r1)
 
     def update_pos(self, pos: list, dir: str) -> list:
         if dir == 'N':
@@ -176,20 +191,45 @@ class Maze:
             r.append('W')
         return r
 
-    # @staticmethod
-    # def is_same(pos: list, pos2: tuple) -> bool:
-    #     if pos[0] == pos2[0] and pos[1] == pos2[1]:
-    #         return True
-    #     return False
-        
     def imperfect_maze(self):
-        ...
+        stack = []
+        visited = set()
+        pos = [0, 0]
+        # state = 0
+
+        stack.append(pos[:]) # stack of list of positions -> actual way
+        visited.add(tuple(pos)) # all visited positions
+        if self.ft != []:
+            for p in self.ft:
+                if p is not None:
+                    visited.add(tuple(p))
+
+        seed(self.d)
+        while stack:
+            pos = stack[-1][:]
+            dir = self.can_pass_through(pos, visited)
+            if dir:
+                next = choice(dir)
+                self.m[pos[1]][pos[0]].remove_wall(next)
+                new = self.update_pos(pos, next)
+                self.m[new[1]][new[0]].remove_wall(next, True)
+                stack.append(new[:])
+                visited.add(tuple(new[:]))
+            else:
+                last = stack.pop(-1)
+                # print('oui')
+                if tuple(last) not in self.ft and last != [0, 0]:
+                    # print('ah!')
+                    last_d = self.m[last[1]][last[0]].dead_end(self.w, self.h)
+                    last2 = stack[-1][:]
+                    self.m[last2[1]][last2[0]].remove_wall(last_d, True)
+
     
     def solver(self) -> tuple[set, list]: #bfs
         stack = []
         visited = set()
         pos = list(self.s)[:]
-        print(pos, '\n')
+        # print(pos, '\n')
 
         stack.append(pos[:]) # stack of list of positions on the same level
         visited.add(tuple(pos)) # all visited positions
@@ -204,7 +244,9 @@ class Maze:
                 dir = self.check_pass(p, visited)
                 if dir:
                     for d in dir:
+                        # print(f'pos: {p}')
                         tmp = self.update_pos(p[:], d)
+                        # print(f'tmp: {tmp}')
                         t_stack.append(tmp[:])
                         self.m[tmp[1]][tmp[0]].prev = p[:]
                         self.m[tmp[1]][tmp[0]].dir = d
@@ -221,10 +263,8 @@ class Maze:
             directions.append(pos.dir)
             pos = self.m[pos.prev[1]][pos.prev[0]]
         path.add(tuple(self.s))
-        # directions.reverse()
-        # path.reverse()
         return path, directions
-        
+
     def check_pass(self, pos: list[int], visited: set):
         dir = []
         c = ['N', 'E', 'W', 'S']

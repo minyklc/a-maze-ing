@@ -22,43 +22,62 @@ class Color:
         self.black = '\033[40m  '
         self.cell = '\033[0m  '
         self.void = '\033[0m'
+    
+    def which_color(self, color: str) -> tuple[str, str]:
+        if color == 'purple':
+            return self.purple, self.lightpurple
+        elif color == 'yellow':
+            return self.yellow, self.lightyellow
+        elif color == 'blue':
+            return self.blue, self.lightblue
+        elif color == 'cyan':
+            return self.cyan, self.lightcyan
+        elif color == 'green':
+            return self.green, self.lightgreen
+        elif color == 'black':
+            return self.black, self.white
+        elif color == 'white':
+            return self.white, self.grey
+        else:
+            return self.red, self.lightred
 
 
 def display(maze: list[list[Box]],
             forty_two: set | set[tuple[int]],
             path: set | set[tuple[int]],
+            color: str,
             animation: bool = False,
             pos: None | list[int] = None,
             start: None | list[int] = None,
             end: None | list[int] = None) -> None:
 
     c = Color()
-    color = c.red
+    cwall, clight = c.which_color(color)
     # s = time.time()
-    top = color * (len(maze[0]) * 2 + 1) + c.void
+    top = cwall * (len(maze[0]) * 2 + 1) + c.void
     if animation:
         time.sleep(0.05)
     print(top)
 
     for y in range(len(maze)):
-        line = color
-        bottom = color
+        line = cwall
+        bottom = cwall
         for x in range(len(maze[0])):
             cell = maze[y][x]
             walls = cell.has_wall()
             if pos and pos[0] == x and pos[1] == y:
-                line += c.black + color if 'E' in walls else c.black + c.cell
+                line += c.black + cwall if 'E' in walls else c.black + c.cell
             elif start and start[0] == x and start[1] == y:
-                line += c.purple + color if 'E' in walls else c.purple + c.cell
+                line += c.purple + cwall if 'E' in walls else c.purple + c.cell
             elif end and end[0] == x and end[1] == y:
-                line += c.lightpurple + color if 'E' in walls else c.lightpurple + c.cell
+                line += c.lightpurple + cwall if 'E' in walls else c.lightpurple + c.cell
             elif path and cell.pos in path:
-                line += c.grey + color if 'E' in walls else c.grey + c.cell
+                line += c.grey + cwall if 'E' in walls else c.grey + c.cell
             elif forty_two and cell.pos in forty_two:
-                line += c.lightred + color
+                line += clight + cwall
             else:
-                line += c.cell + color if 'E' in walls else c.cell * 2
-            bottom += color * 2 if 'S' in walls else c.cell + color
+                line += c.cell + cwall if 'E' in walls else c.cell * 2
+            bottom += cwall * 2 if 'S' in walls else c.cell + cwall
 
         if animation:
             time.sleep(0.05)
