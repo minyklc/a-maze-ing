@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from random import choice, seed
-import time
 
 
 class Box:
