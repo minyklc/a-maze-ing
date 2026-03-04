@@ -1,6 +1,6 @@
 # mandatory keys
-WIDTH=1000
-HEIGHT=1000
+WIDTH=30
+HEIGHT=30
 ENTRY=0,0
 EXIT=29, 29
 OUTPUT_FILE=output.txt

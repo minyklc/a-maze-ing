@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from MazeGenerator import Box
 import time
-import sys
 
 
 class Color:

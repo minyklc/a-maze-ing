@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from random import choice, seed
 import time
-import os
+
 
 class Box:
     def __init__(self, x: int, y: int):
@@ -71,7 +71,7 @@ class Maze:
                 maze[n].append(Box(b, n))
         return maze
 
-    def forty_two(self, height, width) -> set[tuple[int]] | list:
+    def forty_two(self, height, width) -> set[tuple[int]] | set:
         total = set()
 
         if height >= 7 and width >= 9:
@@ -185,7 +185,7 @@ class Maze:
     def imperfect_maze(self):
         ...
     
-    def solver(self): #bfs
+    def solver(self) -> tuple[set, list]: #bfs
         stack = []
         visited = set()
         pos = list(self.s)[:]

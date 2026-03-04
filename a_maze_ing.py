@@ -39,7 +39,7 @@ def right(pos: list[int], maze: list[list[Box]]) -> int:
 
 
 def ft_interface(maze: Maze, entry: list[int],
-                 exit: list[int], path: list[list[int]]):
+                 exit: list[int], path: set[tuple[int]]):
     pos = entry[:]
     fd = 0
     stt = termios.tcgetattr(fd)
@@ -114,7 +114,7 @@ def main() -> None:
         anim = True if param['animation'] else False
     else:
         anim = False
-    path = []
+    path = set()
 
     os.system('clear')
     display(maze.m, maze.ft, path, anim)
@@ -130,7 +130,7 @@ def main() -> None:
                 path = maze.sv
         elif line.rstrip() == '2': #show/hide shortest path
             if path:
-                path = []
+                path = set()
             else:
                 path = maze.sv
         elif line.rstrip() == '3': #change wall color
