@@ -41,16 +41,16 @@ class Box:
     
     def dead_end(self, width: int, height: int) -> str | None:
         if self.walls == 0b0111 and self.pos[0] < width - 1: #east
-            self.walls -= 0b0010
+            # self.walls -= 0b0010
             return 'E'
         elif self.walls == 0b1011 and self.pos[1] > 0: #north
-            self.walls -= 0b0001
+            # self.walls -= 0b0001
             return 'N'
         elif self.walls == 0b1101 and self.pos[0] > 0: #west
-            self.walls -= 0b1000
+            # self.walls -= 0b1000
             return 'W'
         elif self.walls == 0b1110 and self.pos[1] > height - 1: #south
-            self.walls -= 0b0100
+            # self.walls -= 0b0100
             return 'S'
 
     def has_wall(self) -> set[str | None]:
@@ -195,7 +195,7 @@ class Maze:
         stack = []
         visited = set()
         pos = [0, 0]
-        # state = 0
+        state = 0
 
         stack.append(pos[:]) # stack of list of positions -> actual way
         visited.add(tuple(pos)) # all visited positions
@@ -209,20 +209,23 @@ class Maze:
             pos = stack[-1][:]
             dir = self.can_pass_through(pos, visited)
             if dir:
+                state = 0
                 next = choice(dir)
                 self.m[pos[1]][pos[0]].remove_wall(next)
                 new = self.update_pos(pos, next)
                 self.m[new[1]][new[0]].remove_wall(next, True)
                 stack.append(new[:])
                 visited.add(tuple(new[:]))
-            else:
+            elif state == 0:
+                state = 1
                 last = stack.pop(-1)
-                # print('oui')
-                if tuple(last) not in self.ft and last != [0, 0]:
-                    # print('ah!')
-                    last_d = self.m[last[1]][last[0]].dead_end(self.w, self.h)
-                    last2 = stack[-1][:]
+                last_d = self.m[last[1]][last[0]].dead_end(self.w, self.h)
+                last2 = self.update_pos(pos, last_d)
+                if last != [0, 0] and tuple(last2) not in self.ft:
+                    self.m[last[1]][last[0]].remove_wall(last_d)
                     self.m[last2[1]][last2[0]].remove_wall(last_d, True)
+            else:
+                stack.pop(-1)
 
     
     def solver(self) -> tuple[set, list]: #bfs
