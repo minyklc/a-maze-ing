@@ -21,7 +21,7 @@ def check_value(key: str, value: str) -> int:
 
     try:
         if key == 'output_file':
-            with open(value, 'r'):
+            with open(value, 'w'):
                 ...
     except Exception:
         print('error: output_file must be valid, for example -> maze.txt')

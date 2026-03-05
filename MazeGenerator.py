@@ -7,16 +7,6 @@ class Box:
         self.pos = (x, y)
         self.walls = 0b1111
 
-    def add_wall(self, dir: list | str) -> None:
-        if 'N' in dir and 'N' not in self.has_wall():
-            self.walls += 0b0001
-        if 'E' in dir and 'E' not in self.has_wall():
-            self.walls += 0b0010
-        if 'S' in dir and 'S' not in self.has_wall():
-            self.walls += 0b0100
-        if 'W' in dir and 'W' not in self.has_wall():
-            self.walls += 0b1000
-
     def remove_wall(self, dir: str, reverse: bool = False) -> None:
         if reverse is True:
             if dir == 'N':
@@ -47,6 +37,7 @@ class Box:
             return 'W'
         elif self.walls == 0b1110 and self.pos[1] > height - 1:  # south
             return 'S'
+        return None
 
     def has_wall(self) -> set[str | None]:
         m = set()
@@ -58,12 +49,12 @@ class Box:
             m.add('S')
         if self.walls in {8, 9, 10, 11, 12, 13, 14, 15}:
             m.add('W')
-        return m
+        return {None, }
 
 
 class Maze:
     def __init__(self, height: int, width: int,
-                 start: list, end: list,
+                 start: list[int], end: list[int],
                  perfect: bool,
                  seed: str | int):
         self.h = height
@@ -73,15 +64,15 @@ class Maze:
         self.e = end
         self.d = seed
 
-    def blank_maze(self, height: int, width: int) -> list[list[Box]]:
-        maze = []
+    def blank_maze(self, height: int, width: int) -> list[list[Box]] | list:
+        maze = list()
         for n in range(height):
             maze.append([])
             for b in range(width):
                 maze[n].append(Box(b, n))
         return maze
 
-    def forty_two(self, height, width) -> set[tuple[int]] | set:
+    def forty_two(self, height: int, width: int) -> set[tuple[int]] | set:
         total = set()
 
         if height >= 7 and width >= 9:
@@ -141,7 +132,7 @@ class Maze:
             else:
                 stack.pop(-1)
 
-    def update_pos(self, pos: list, dir: str) -> list:
+    def update_pos(self, pos: list, dir: str) -> list[int]:
         if dir == 'N':
             pos[1] -= 1
         elif dir == 'E':
