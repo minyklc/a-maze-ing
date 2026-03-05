@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from random import randint
-from typing import Union
+from typing import Any
 
 
 def check_value(key: str, value: str) -> int:
@@ -39,8 +39,8 @@ def check_value(key: str, value: str) -> int:
     return 0
 
 
-def parsing(file: str) -> dict[str, Union[str, int, bool]] | dict[None, None]:
-    r = dict()
+def parsing(file: str) -> dict[Any, Any]:
+    r = dict[str, Any]()
     try:
         with open(file, 'r') as f:
             for line in f:
@@ -85,16 +85,16 @@ def parsing(file: str) -> dict[str, Union[str, int, bool]] | dict[None, None]:
         r.pop("height")
         r.update({'height': v2})
 
-        i = r['entry'].find(',')
-        e1 = [int(r['entry'][:i]), int(r['entry'][i+1:])]
-        if e1[0] >= r['width'] or e1[1] >= r['height']:
+        i = str(r['entry']).find(',')
+        e1 = [int(str(r['entry'])[:i]), int(str(r['entry'])[i+1:])]
+        if e1[0] >= v1 or e1[1] >= v2:
             raise ValueError('entry must be in height and width range')
         r.pop("entry")
         r.update({'entry': e1})
 
-        i = r['exit'].find(',')
-        e2 = [int(r['exit'][:i]), int(r['exit'][i+1:])]
-        if e2[0] >= r['width'] or e2[1] >= r['height']:
+        i = str(r['exit']).find(',')
+        e2 = [int(str(r['exit'])[:i]), int(str(r['exit'])[i+1:])]
+        if e2[0] >= v1 or e2[1] >= v2:
             raise ValueError('exit must be in height and width range')
         r.pop("exit")
         r.update({'exit': e2})

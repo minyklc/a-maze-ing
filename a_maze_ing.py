@@ -40,7 +40,7 @@ def right(pos: list[int], maze: list[list[Box]]) -> int:
 
 
 def ft_interface(maze: Maze, entry: list[int],
-                 exit: list[int], path: set[tuple[int]],
+                 exit: list[int], path: set[tuple[int, int]],
                  color: str) -> None:
     pos = entry[:]
     fd = 0
@@ -97,7 +97,7 @@ def ft_interface(maze: Maze, entry: list[int],
     print("Exited")
 
 
-def interaction():
+def interaction() -> None:
     print()
     print('1 = refresh')
     print('2 = generate new maze')
@@ -120,7 +120,7 @@ def main() -> None:
         anim = True if param['animation'] else False
     else:
         anim = False
-    path = set()
+    path = set[tuple[int, int]]()
     colors = [
         'red',
         'yellow',
