@@ -49,7 +49,7 @@ class Box:
             m.add('S')
         if self.walls in {8, 9, 10, 11, 12, 13, 14, 15}:
             m.add('W')
-        return {None, }
+        return m
 
 
 class Maze:
