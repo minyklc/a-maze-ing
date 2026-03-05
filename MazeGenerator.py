@@ -40,16 +40,12 @@ class Box:
     
     def dead_end(self, width: int, height: int) -> str | None:
         if self.walls == 0b0111 and self.pos[0] < width - 1: #east
-            # self.walls -= 0b0010
             return 'E'
         elif self.walls == 0b1011 and self.pos[1] > 0: #north
-            # self.walls -= 0b0001
             return 'N'
         elif self.walls == 0b1101 and self.pos[0] > 0: #west
-            # self.walls -= 0b1000
             return 'W'
         elif self.walls == 0b1110 and self.pos[1] > height - 1: #south
-            # self.walls -= 0b0100
             return 'S'
 
     def has_wall(self) -> set[str | None]:
@@ -130,14 +126,9 @@ class Maze:
                     visited.add(tuple(p))
 
         seed(self.d)
-        # s = time.time()
-        # r1 = int()
         while stack:
             pos = stack[-1][:]
-            # s1 = time.time()
             dir = self.can_pass_through(pos, visited)
-            # e1 = time.time()
-            # r1 += e1 - s1
             if dir:
                 next = choice(dir)
                 self.m[pos[1]][pos[0]].remove_wall(next)
@@ -147,12 +138,6 @@ class Maze:
                 visited.add(tuple(new[:]))
             else:
                 stack.pop(-1)
-            # os.system('clear')
-            # display(self.m, self.ft, [], False, pos, self.s, self.e)
-            # time.sleep(0.05)
-        # e = time.time()
-        # print(e-s)
-        # print(r1)
 
     def update_pos(self, pos: list, dir: str) -> list:
         if dir == 'N':
@@ -231,7 +216,6 @@ class Maze:
         stack = []
         visited = set()
         pos = list(self.s)[:]
-        # print(pos, '\n')
 
         stack.append(pos[:]) # stack of list of positions on the same level
         visited.add(tuple(pos)) # all visited positions
@@ -246,9 +230,7 @@ class Maze:
                 dir = self.check_pass(p, visited)
                 if dir:
                     for d in dir:
-                        # print(f'pos: {p}')
                         tmp = self.update_pos(p[:], d)
-                        # print(f'tmp: {tmp}')
                         t_stack.append(tmp[:])
                         self.m[tmp[1]][tmp[0]].prev = p[:]
                         self.m[tmp[1]][tmp[0]].dir = d

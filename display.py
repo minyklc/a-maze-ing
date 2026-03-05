@@ -53,7 +53,6 @@ def display(maze: list[list[Box]],
 
     c = Color()
     cwall, clight = c.which_color(color)
-    # s = time.time()
     top = cwall * (len(maze[0]) * 2 + 1) + c.void
     if animation:
         time.sleep(0.05)
@@ -82,13 +81,9 @@ def display(maze: list[list[Box]],
         if animation:
             time.sleep(0.05)
         print(f"{line+c.void}")
-        # print(line, c.void, sep='')
         if animation:
             time.sleep(0.05)
-        # print(bottom, c.void, sep='')
         print(f"{bottom+c.void}")
-    # e = time.time()
-    # print(e - s)
 
 
 if __name__ == '__main__':

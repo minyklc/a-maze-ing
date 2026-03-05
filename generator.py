@@ -7,9 +7,9 @@ def maze_output(maze: Maze, file: str):
         for i in range(len(maze.m)):
             for j in range(len(maze.m[0])):
                 if maze.m[i][j].walls < 10:
-                    f.write(f'{int(hex(maze.m[i][j].walls).split('x')[-1])} ')
+                    f.write(f'{int(hex(maze.m[i][j].walls).split('x')[-1])}')
                 else:
-                    f.write(f'{hex(maze.m[i][j].walls).split('x')[-1].capitalize()} ')
+                    f.write(f'{hex(maze.m[i][j].walls).split('x')[-1].capitalize()}')
             f.write('\n')
         f.write('\n')
         f.write(f"{maze.s[0]}, {maze.s[1]}\n")
