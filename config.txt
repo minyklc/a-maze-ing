@@ -1,0 +1,11 @@
+# mandatory keys
+WIDTH=8
+HEIGHT=7
+ENTRY=20,0
+EXIT=2,4
+OUTPUT_FILE=output.txt
+PERFECT=False
+
+# additional keys
+SEED=42
+#ANIMATION=True
