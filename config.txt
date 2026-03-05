@@ -1,8 +1,8 @@
 # mandatory keys
-WIDTH=7
+WIDTH=8
 HEIGHT=7
-ENTRY=0,0
-EXIT=2, 2
+ENTRY=20,0
+EXIT=2,4
 OUTPUT_FILE=output.txt
 PERFECT=False
 

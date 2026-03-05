@@ -16,7 +16,7 @@ def check_value(key: str, value: str) -> int:
             int(value[:i])
             int(value[i+1:])
     except ValueError:
-        print(r'error: entry or exit key must be {number},{number} format')
+        print('error: entry or exit key must be {int, int} format')
         return 1
     
     try:
@@ -75,22 +75,22 @@ def parsing(file: str) -> dict:
         r['height'] = int(r['height'])
         if r['width'] < 2 or r['height'] > 2147483647 \
             or r['height'] < 2 or r['width'] > 2147483647:
-            raise ValueError
+            raise ValueError('width and length must be between 2 and 2147483647')
 
         i = r['entry'].find(',')
         r['entry'] = [int(r['entry'][:i]), int(r['entry'][i+1:])]
         if r['entry'][0] >= r['width'] or r['entry'][1] >= r['height']:
-            raise ValueError
+            raise ValueError('entry must be in height and width range')
 
         i = r['exit'].find(',')
         r['exit'] = [int(r['exit'][:i]), int(r['exit'][i+1:])]
         if r['exit'][0] >= r['width'] or r['exit'][1] >= r['height']:
-            raise ValueError
+            raise ValueError('exit must be in height and width range')
 
         if any(i < 0 for i in r['entry']) or any(i < 0 for i in r['exit']):
-            raise ValueError
+            raise ValueError('entry or exit has negative value')
         if r['entry'] == r['exit']:
-            raise ValueError
+            raise ValueError("entry and exit shouldn't have same coordinates")
 
         if r['perfect'].lower() == 'true':
             r['perfect'] = True
@@ -108,7 +108,7 @@ def parsing(file: str) -> dict:
             r['animation'] = False
         return r
     except ValueError as v:
-        print('error')
+        print(f'error: {v}')
         return {}
 
 

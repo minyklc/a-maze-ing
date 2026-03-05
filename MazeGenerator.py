@@ -104,9 +104,11 @@ class Maze:
                 y += 1
         return total
 
-    def generate(self):
+    def generate(self) -> None | Exception:
         self.m = self.blank_maze(self.h, self.w)
         self.ft = self.forty_two(self.h, self.w)
+        if tuple(self.s) in self.ft or tuple(self.e) in self.ft:
+            raise ValueError()
         if self.p is True:
             self.perfect_maze()
         else:
@@ -215,7 +217,7 @@ class Maze:
     def solver(self) -> tuple[set, list]: #bfs
         stack = []
         visited = set()
-        pos = list(self.s)[:]
+        pos = self.s[:]
 
         stack.append(pos[:]) # stack of list of positions on the same level
         visited.add(tuple(pos)) # all visited positions
@@ -223,7 +225,7 @@ class Maze:
             for p in self.ft:
                 visited.add(tuple(p))
 
-        while any(p == self.e for p in stack) is False:
+        while self.e not in stack:
             t_stack = []
             while stack:
                 p = stack[0]

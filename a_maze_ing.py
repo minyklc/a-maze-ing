@@ -18,21 +18,21 @@ def up(pos: list[int], maze: list[list[Box]]) -> int:
 
 
 def down(pos: list[int], maze: list[list[Box]]) -> int:
-    n = (4, 5, 6, 7, 12, 13, 14, 15)
+    n = {4, 5, 6, 7, 12, 13, 14, 15}
     if maze[pos[1]][pos[0]].walls in n:
         return 0
     return 1
 
 
 def left(pos: list[int], maze: list[list[Box]]) -> int:
-    n = (8, 9, 10, 11, 12, 13, 14, 15)
+    n = {8, 9, 10, 11, 12, 13, 14, 15}
     if maze[pos[1]][pos[0]].walls in n:
         return 0
     return 1
 
 
 def right(pos: list[int], maze: list[list[Box]]) -> int:
-    n = (2, 3, 6, 7, 10, 11, 14, 15)
+    n = {2, 3, 6, 7, 10, 11, 14, 15}
     if maze[pos[1]][pos[0]].walls in n:
         return 0
     return 1
@@ -111,7 +111,6 @@ def main() -> None:
     param = parsing(args[1])
     if param == {}:
         return
-    maze = generator(param)
     if 'animation' in param.keys():
         anim = True if param['animation'] else False
     else:
@@ -130,9 +129,17 @@ def main() -> None:
     i = 0
     color = colors[i]
 
+    try:
+        maze = generator(param)
+    except ValueError:
+        print('error: entry or exit in 42 pattern (please choose other coordinates..)')
+        return
+
     os.system('clear')
     display(maze.m, maze.ft, path, color, anim)
     print(f'seed: {maze.d}')
+    if not maze.ft:
+        print("warning: 42 pattern couldn't be reseolved (must be at least 9x7)")
     interaction()
     for line in sys.stdin:
         if line.rstrip() == 'q':
