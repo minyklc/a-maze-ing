@@ -127,9 +127,7 @@ def main() -> None:
         'purple',
         'blue',
         'cyan',
-        'green',
-        'black',
-        'white'
+        'green'
     ]
     i = 0
     color = colors[i]

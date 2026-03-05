@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+
 from random import randint
+from typing import Union
 
 
 def check_value(key: str, value: str) -> int:
@@ -37,8 +39,8 @@ def check_value(key: str, value: str) -> int:
     return 0
 
 
-def parsing(file: str) -> dict:
-    r = {}
+def parsing(file: str) -> dict[str, Union[str, int, bool]] | dict[None, None]:
+    r = dict()
     try:
         with open(file, 'r') as f:
             for line in f:
@@ -57,10 +59,10 @@ def parsing(file: str) -> dict:
                         r.update({k: v})
     except FileNotFoundError:
         print('error: "config.txt" file not found')
-        return {}
+        return dict()
     except NameError:
         print(r'error: each paramater must be in format key=value\n')
-        return {}
+        return dict()
 
     mandatory = ['width', 'height', 'entry', 'exit', 'output_file', 'perfect']
     try:
@@ -69,25 +71,33 @@ def parsing(file: str) -> dict:
                 raise NameError(m)
     except NameError as n:
         print(f'error: "{n}" key not found in config.txt')
-        return {}
+        return dict()
 
     try:
-        r['width'] = int(r['width'])
-        r['height'] = int(r['height'])
-        if r['width'] < 2 or r['height'] > 2147483647 \
-                or r['height'] < 2 or r['width'] > 2147483647:
+        v1 = int(r['width'])
+        v2 = int(r['height'])
+        if v1 < 2 or v2 > 2147483647 \
+                or v2 < 2 or v1 > 2147483647:
             raise ValueError('width and length must be \
                              between 2 and 2147483647')
+        r.pop("width")
+        r.update({'width': v1})
+        r.pop("height")
+        r.update({'height': v2})
 
         i = r['entry'].find(',')
-        r['entry'] = [int(r['entry'][:i]), int(r['entry'][i+1:])]
-        if r['entry'][0] >= r['width'] or r['entry'][1] >= r['height']:
+        e1 = [int(r['entry'][:i]), int(r['entry'][i+1:])]
+        if e1[0] >= r['width'] or e1[1] >= r['height']:
             raise ValueError('entry must be in height and width range')
+        r.pop("entry")
+        r.update({'entry': e1})
 
         i = r['exit'].find(',')
-        r['exit'] = [int(r['exit'][:i]), int(r['exit'][i+1:])]
-        if r['exit'][0] >= r['width'] or r['exit'][1] >= r['height']:
+        e2 = [int(r['exit'][:i]), int(r['exit'][i+1:])]
+        if e2[0] >= r['width'] or e2[1] >= r['height']:
             raise ValueError('exit must be in height and width range')
+        r.pop("exit")
+        r.update({'exit': e2})
 
         if any(i < 0 for i in r['entry']) or any(i < 0 for i in r['exit']):
             raise ValueError('entry or exit has negative value')
@@ -111,7 +121,7 @@ def parsing(file: str) -> dict:
         return r
     except ValueError as v:
         print(f'error: {v}')
-        return {}
+        return dict()
 
 
 if __name__ == "__main__":

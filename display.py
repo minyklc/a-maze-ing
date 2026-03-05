@@ -4,7 +4,7 @@ import time
 
 
 class Color:
-    def __init__(self):
+    def __init__(self) -> None:
         self.white = '\033[47m  '
         self.lightcyan = '\033[106m  '
         self.cyan = '\033[46m  '
@@ -34,17 +34,13 @@ class Color:
             return self.cyan, self.lightcyan
         elif color == 'green':
             return self.green, self.lightgreen
-        elif color == 'black':
-            return self.black, self.white
-        elif color == 'white':
-            return self.white, self.grey
         else:
             return self.red, self.lightred
 
 
 def display(maze: list[list[Box]],
-            forty_two: set | set[tuple[int]],
-            path: set | set[tuple[int]],
+            forty_two: set[None] | set[tuple[int, int]],
+            path: set[None] | set[tuple[int, int]],
             color: str,
             animation: bool = False,
             pos: None | list[int] = None,
@@ -65,7 +61,7 @@ def display(maze: list[list[Box]],
             cell = maze[y][x]
             walls = cell.has_wall()
             if pos and pos[0] == x and pos[1] == y:
-                line += c.black + cwall if 'E' in walls else c.black + c.cell
+                line += c.white + cwall if 'E' in walls else c.white + c.cell
             elif start and start[0] == x and start[1] == y:
                 line += c.purple + cwall if 'E' in walls else c.purple + c.cell
             elif end and end[0] == x and end[1] == y:

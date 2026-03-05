@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 from MazeGenerator import Maze
+from typing import Any
 
 
-def maze_output(maze: Maze, file: str):
+def maze_output(maze: Maze, file: str) -> None:
     with open(file, 'w') as f:
         for i in range(len(maze.m)):
             for j in range(len(maze.m[0])):
@@ -19,7 +20,7 @@ def maze_output(maze: Maze, file: str):
             f.write(d[0])
 
 
-def generator(param: dict) -> Maze:
+def generator(param: dict[str, Any]) -> Maze:
     start = param['entry']  # x, y
     end = param['exit']
     width = param['width']
