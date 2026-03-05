@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import sys
 import os
 import termios
@@ -48,10 +49,10 @@ def ft_interface(maze: Maze, entry: list[int],
     os.system('clear')
     display(maze.m, maze.ft, path, color, False, pos, maze.s, maze.e)
     print('up down right left or q')
-    
+
     try:
         tty.setcbreak(fd)
-    
+
         while pos != exit:
             c1 = sys.stdin.read(1)
             if c1 == 'q':
@@ -59,31 +60,35 @@ def ft_interface(maze: Maze, entry: list[int],
             elif c1 == '\x1b':
                 c2 = sys.stdin.read(1)
                 c3 = sys.stdin.read(1)
-    
+
                 if c2 == '[':
-                    if c3 == 'A': #up
+                    if c3 == 'A':  # up
                         if up(pos, maze.m) == 1:
                             pos[1] -= 1
                             os.system('clear')
-                            display(maze.m, maze.ft, path, color, False, pos, maze.s, maze.e)
+                            display(maze.m, maze.ft, path, color,
+                                    False, pos, maze.s, maze.e)
                             print('up down right left or q')
-                    elif c3 == 'B': #down
+                    elif c3 == 'B':  # down
                         if down(pos, maze.m) == 1:
                             pos[1] += 1
                             os.system('clear')
-                            display(maze.m, maze.ft, path, color, False, pos, maze.s, maze.e)
+                            display(maze.m, maze.ft, path, color,
+                                    False, pos, maze.s, maze.e)
                             print('up down right left or q')
-                    elif c3 == 'C': #right
+                    elif c3 == 'C':  # right
                         if right(pos, maze.m) == 1:
                             pos[0] += 1
                             os.system('clear')
-                            display(maze.m, maze.ft, path, color, False, pos, maze.s, maze.e)
+                            display(maze.m, maze.ft, path, color,
+                                    False, pos, maze.s, maze.e)
                             print('up down right left or q')
-                    elif c3 == 'D': #left
+                    elif c3 == 'D':  # left
                         if left(pos, maze.m) == 1:
                             pos[0] -= 1
                             os.system('clear')
-                            display(maze.m, maze.ft, path, color, False, pos, maze.s, maze.e)
+                            display(maze.m, maze.ft, path, color,
+                                    False, pos, maze.s, maze.e)
                             print('up down right left or q')
         if pos == exit:
             print('congratulation !')
@@ -132,44 +137,46 @@ def main() -> None:
     try:
         maze = generator(param)
     except ValueError:
-        print('error: entry or exit in 42 pattern (please choose other coordinates..)')
+        print('error: entry or exit in 42 pattern '
+              '(please choose other coordinates..)')
         return
 
     os.system('clear')
     display(maze.m, maze.ft, path, color, anim)
     print(f'seed: {maze.d}')
     if not maze.ft:
-        print("warning: 42 pattern couldn't be reseolved (must be at least 9x7)")
+        print("warning: 42 pattern couldn't be reseolved "
+              "(must be at least 9x7)")
     interaction()
     for line in sys.stdin:
         if line.rstrip() == 'q':
             break
-        elif line.rstrip() == '1': #refresh
+        elif line.rstrip() == '1':  # refresh
             ...
-        elif line.rstrip() == '2': #generate new random maze
+        elif line.rstrip() == '2':  # generate new random maze
             param['seed'] = random.randint(0, 2147483647)
             maze = generator(param)
             if path:
                 path = maze.sv
-        elif line.rstrip() == '3': #show/hide shortest path
+        elif line.rstrip() == '3':  # show/hide shortest path
             if path:
                 path = set()
             else:
                 path = maze.sv
-        elif line.rstrip() == '4': #change wall color
+        elif line.rstrip() == '4':  # change wall color
             i += 1
             if i == len(colors):
                 i = 0
             color = colors[i]
-        elif line.rstrip() == '5': #play the maze
+        elif line.rstrip() == '5':  # play the maze
             ft_interface(maze, param['entry'], param['exit'], path, color)
-        else :
+        else:
             print('please select another key...')
         os.system('clear')
         display(maze.m, maze.ft, path, color, anim)
         print(f'seed: {maze.d}')
         interaction()
-    
+
     print("Exit")
 
 

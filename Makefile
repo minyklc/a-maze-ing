@@ -13,7 +13,9 @@ clean:
 	rm -rf .mypy_cache __pycache__
 
 lint:
-	flake8 . && mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	python3.10 -m flake8 . && mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 lint-strict:
-	flake8 . && mypy . --strict
+	python3.10 -m flake8 . && mypy . --strict
+
+.PHONY: all install run debug clean lint lint-strict

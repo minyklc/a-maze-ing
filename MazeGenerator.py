@@ -37,15 +37,15 @@ class Box:
             self.walls -= 0b0100
         elif dir == 'W' and 'W' in walls:
             self.walls -= 0b1000
-    
+
     def dead_end(self, width: int, height: int) -> str | None:
-        if self.walls == 0b0111 and self.pos[0] < width - 1: #east
+        if self.walls == 0b0111 and self.pos[0] < width - 1:  # east
             return 'E'
-        elif self.walls == 0b1011 and self.pos[1] > 0: #north
+        elif self.walls == 0b1011 and self.pos[1] > 0:  # north
             return 'N'
-        elif self.walls == 0b1101 and self.pos[0] > 0: #west
+        elif self.walls == 0b1101 and self.pos[0] > 0:  # west
             return 'W'
-        elif self.walls == 0b1110 and self.pos[1] > height - 1: #south
+        elif self.walls == 0b1110 and self.pos[1] > height - 1:  # south
             return 'S'
 
     def has_wall(self) -> set[str | None]:
@@ -115,13 +115,13 @@ class Maze:
             self.imperfect_maze()
         self.sv, self.dir = self.solver()
 
-    def perfect_maze(self): #dfs
+    def perfect_maze(self):  # dfs
         stack = []
         visited = set()
         pos = [0, 0]
 
-        stack.append(pos[:]) # stack of list of positions -> actual way
-        visited.add(tuple(pos)) # all visited positions
+        stack.append(pos[:])  # stack of list of positions -> actual way
+        visited.add(tuple(pos))  # all visited positions
         if self.ft != []:
             for p in self.ft:
                 if p is not None:
@@ -183,8 +183,8 @@ class Maze:
         pos = [0, 0]
         state = 0
 
-        stack.append(pos[:]) # stack of list of positions -> actual way
-        visited.add(tuple(pos)) # all visited positions
+        stack.append(pos[:])  # stack of list of positions -> actual way
+        visited.add(tuple(pos))  # all visited positions
         if self.ft != []:
             for p in self.ft:
                 if p is not None:
@@ -213,14 +213,13 @@ class Maze:
             else:
                 stack.pop(-1)
 
-    
-    def solver(self) -> tuple[set, list]: #bfs
+    def solver(self) -> tuple[set, list]:  # bfs
         stack = []
         visited = set()
         pos = self.s[:]
 
-        stack.append(pos[:]) # stack of list of positions on the same level
-        visited.add(tuple(pos)) # all visited positions
+        stack.append(pos[:])  # stack of list of positions on the same level
+        visited.add(tuple(pos))  # all visited positions
         if self.ft:
             for p in self.ft:
                 visited.add(tuple(p))
@@ -239,7 +238,7 @@ class Maze:
                 visited.add(tuple(p[:]))
                 stack.remove(p[:])
             stack = t_stack
-        
+
         path = set()
         directions = list()
         end = list(self.e)[:]
@@ -256,6 +255,6 @@ class Maze:
         c = ['N', 'E', 'W', 'S']
         for i in c:
             if i not in self.m[pos[1]][pos[0]].has_wall() and \
-                tuple(self.update_pos(pos[:], i)) not in visited:
-                    dir.append(i)
+             tuple(self.update_pos(pos[:], i)) not in visited:
+                dir.append(i)
         return dir

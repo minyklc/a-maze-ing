@@ -18,7 +18,7 @@ def check_value(key: str, value: str) -> int:
     except ValueError:
         print('error: entry or exit key must be {int, int} format')
         return 1
-    
+
     try:
         if key == 'output_file':
             with open(value, 'r'):
@@ -26,7 +26,7 @@ def check_value(key: str, value: str) -> int:
     except Exception:
         print('error: output_file must be valid, for example -> maze.txt')
         return 1
-    
+
     try:
         if key == 'perfect':
             if value.lower() != 'true' and value.lower() != 'false':
@@ -35,6 +35,7 @@ def check_value(key: str, value: str) -> int:
         print('error: perfect key must be set to "True" or "False"')
         return 1
     return 0
+
 
 def parsing(file: str) -> dict:
     r = {}
@@ -74,8 +75,9 @@ def parsing(file: str) -> dict:
         r['width'] = int(r['width'])
         r['height'] = int(r['height'])
         if r['width'] < 2 or r['height'] > 2147483647 \
-            or r['height'] < 2 or r['width'] > 2147483647:
-            raise ValueError('width and length must be between 2 and 2147483647')
+                or r['height'] < 2 or r['width'] > 2147483647:
+            raise ValueError('width and length must be \
+                             between 2 and 2147483647')
 
         i = r['entry'].find(',')
         r['entry'] = [int(r['entry'][:i]), int(r['entry'][i+1:])]
@@ -101,7 +103,7 @@ def parsing(file: str) -> dict:
             r['seed'] = int(r['seed'])
         if 'seed' not in r.keys():
             r.update({'seed': randint(0, 2147483647)})
-        
+
         if 'animation' in r.keys() and r['animation'].lower() == 'true':
             r['animation'] = True
         elif 'animation' in r.keys():

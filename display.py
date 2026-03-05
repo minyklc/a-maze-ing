@@ -22,7 +22,7 @@ class Color:
         self.black = '\033[40m  '
         self.cell = '\033[0m  '
         self.void = '\033[0m'
-    
+
     def which_color(self, color: str) -> tuple[str, str]:
         if color == 'purple':
             return self.purple, self.lightpurple
@@ -69,7 +69,8 @@ def display(maze: list[list[Box]],
             elif start and start[0] == x and start[1] == y:
                 line += c.purple + cwall if 'E' in walls else c.purple + c.cell
             elif end and end[0] == x and end[1] == y:
-                line += c.lightpurple + cwall if 'E' in walls else c.lightpurple + c.cell
+                line += c.lightpurple + cwall if 'E' in walls \
+                    else c.lightpurple + c.cell
             elif path and cell.pos in path:
                 line += c.grey + cwall if 'E' in walls else c.grey + c.cell
             elif forty_two and cell.pos in forty_two:
