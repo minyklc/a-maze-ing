@@ -285,7 +285,7 @@ def ask_dimensions(param: dict) -> bool:  # type: ignore[type-arg]
     return True
 
 
-def interaction(anim: bool, cursor: str) -> None:
+def interaction(anim: bool, anim2: bool, cursor: str) -> None:
     """Print the list of available user commands to the terminal.
 
     This function is called after displaying the maze to show the user what
@@ -300,6 +300,7 @@ def interaction(anim: bool, cursor: str) -> None:
         None.
     """
     anim_status = 'ON' if anim else 'OFF'
+    anim_status = 'ON while generating' if anim2 else anim_status
     print()
     print('1 = refresh')
     print('2 = generate new maze')
@@ -346,9 +347,10 @@ def main() -> None:
     i = 0
     color = colors[i]
     cursor = '\033[47m  \033[0m'
+    anim2 = False
 
     try:
-        cb = make_callback(set(), color) if anim else None
+        cb = make_callback(set(), color) if anim2 else None
         maze = generator(param)
     except ValueError:
         print('error: entry or exit in 42 pattern '
@@ -356,12 +358,12 @@ def main() -> None:
         return
 
     os.system('clear')
-    display(maze.m, maze.ft, path, color, False)
+    display(maze.m, maze.ft, path, color, anim)
     print(f'seed: {maze.d}')
     if not maze.ft:
         print("warning: 42 pattern couldn't be reseolved "
               "(must be at least 9x7)")
-    interaction(anim, cursor)
+    interaction(anim, anim2, cursor)
     for line in sys.stdin:
         if line.rstrip() == 'q':
             break
@@ -369,7 +371,7 @@ def main() -> None:
             ...
         elif line.rstrip() == '2':  # generate new random maze
             param['seed'] = random.randint(0, 2147483647)
-            cb = make_callback(set(), color) if anim else None
+            cb = make_callback(set(), color) if anim2 else None
             maze = generator(param, cb)
             if path:
                 path = maze.sv
@@ -387,13 +389,19 @@ def main() -> None:
             ft_interface(maze, param['entry'], param['exit'],
                          path, color, cursor)
         elif line.rstrip() == '6':  # toggle animation
-            anim = not anim
+            if anim and not anim2:
+                anim2 = True
+                anim = False
+            elif not anim and anim2:
+                anim2 = False
+            else:
+                anim = True
         elif line.rstrip() == '7':  # change maze dimensions
             if ask_dimensions(param):
                 param['seed'] = random.randint(0, 2147483647)
                 path = set()
                 try:
-                    cb = make_callback(set(), color) if anim else None
+                    cb = make_callback(set(), color) if anim2 else None
                     maze = generator(param, cb)
                 except ValueError:
                     print('error: entry or exit in 42 pattern '
@@ -415,7 +423,7 @@ def main() -> None:
         os.system('clear')
         display(maze.m, maze.ft, path, color, anim)
         print(f'seed: {maze.d}')
-        interaction(anim, cursor)
+        interaction(anim, anim2, cursor)
 
     print("Exit")
 
