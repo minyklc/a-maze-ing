@@ -102,7 +102,7 @@ def ft_interface(maze: Maze, entry: list[int],
     stt = termios.tcgetattr(fd)
 
     os.system('clear')
-    display(maze.m, maze.ft, path, color, False, pos, maze.s, maze.e)
+    display(maze.m, maze.ft, path, color, False, pos, maze.s, maze.e, cursor)
     print('up down right left or q')
 
     try:
@@ -185,6 +185,8 @@ def choose_cursor() -> str:
         The chosen cursor string, or '' on invalid input.
     """
     cursors = [
+        ('\033[47m  \033[0m', 'white cursor'),
+        ('\033[40m  \033[0m', 'black cursor'),
         ('🧑', 'person'),
         ('👩', 'girl'),
         ('👦', 'boy'),
@@ -202,10 +204,6 @@ def choose_cursor() -> str:
         ('👻', 'ghost'),
         ('🤖', 'robot'),
         ('💩', 'poop'),
-        ('@', 'at'),
-        ('$', 'dollar'),
-        ('&', 'ampersand'),
-        ('*', 'star ascii'),
     ]
     print()
     print('Choose your cursor:')
@@ -213,8 +211,7 @@ def choose_cursor() -> str:
         print(f'  {idx} = {char}  ({label})')
     print('  Enter = keep current')
     print()
-    print('Choice: ', end='', flush=True)
-    raw = sys.stdin.readline().rstrip()
+    raw = input('Choice: ')
     if not raw:
         return ''
     try:
@@ -243,14 +240,9 @@ def ask_dimensions(param: dict) -> bool:  # type: ignore[type-arg]
         True if dimensions were updated, False if the user cancelled
         or entered invalid values.
     """
-    print('Enter new width (>= 2): ', end='', flush=True)
-    raw_w = sys.stdin.readline().rstrip()
-    print('Enter new height (>= 2): ', end='', flush=True)
-    raw_h = sys.stdin.readline().rstrip()
-
     try:
-        new_w = int(raw_w)
-        new_h = int(raw_h)
+        new_w = int(input('Enter new width (>= 2): '))
+        new_h = int(input('Enter new height (>= 2): '))
         if new_w < 2 or new_h < 2:
             raise ValueError
     except ValueError:
@@ -264,14 +256,10 @@ def ask_dimensions(param: dict) -> bool:  # type: ignore[type-arg]
     default_exit = cur_exit if (cur_exit[0] < new_w and
                                 cur_exit[1] < new_h) else [new_w-1, new_h-1]
 
-    print(f'Enter new entry x,y (0-{new_w-1}, 0-{new_h-1})'
-          f' [default: {default_entry[0]},{default_entry[1]}]: ',
-          end='', flush=True)
-    raw_entry = sys.stdin.readline().rstrip()
-    print(f'Enter new exit  x,y (0-{new_w-1}, 0-{new_h-1})'
-          f' [default: {default_exit[0]},{default_exit[1]}]: ',
-          end='', flush=True)
-    raw_exit = sys.stdin.readline().rstrip()
+    raw_entry = input(f'Enter new entry x,y (0-{new_w-1}, 0-{new_h-1})'
+          f' [default: {cur_entry[0]},{cur_entry[1]}]: ')
+    raw_exit = input(f'Enter new exit  x,y (0-{new_w-1}, 0-{new_h-1})'
+          f' [default: {cur_exit[0]},{cur_exit[1]}]: ')
 
     try:
         entry = ([int(v) for v in raw_entry.split(',')]
@@ -357,7 +345,7 @@ def main() -> None:
     ]
     i = 0
     color = colors[i]
-    cursor = '█'
+    cursor = '\033[47m  \033[0m'
 
     try:
         cb = make_callback(set(), color) if anim else None

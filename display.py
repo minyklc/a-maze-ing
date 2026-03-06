@@ -28,22 +28,22 @@ class Color:
         Each attribute is a background color code followed by two spaces,
         ready to be printed as a colored cell block in the terminal.
         """
-        self.white = '\033[47m  '
-        self.lightcyan = '\033[106m  '
-        self.cyan = '\033[46m  '
-        self.lightpurple = '\033[105m  '
-        self.purple = '\033[45m  '
-        self.lightblue = '\033[104m  '
-        self.blue = '\033[44m  '
-        self.lightyellow = '\033[103m  '
-        self.yellow = '\033[43m  '
-        self.lightgreen = '\033[102m  '
-        self.green = '\033[42m  '
-        self.lightred = '\033[101m  '
-        self.red = '\033[41m  '
-        self.grey = '\033[100m  '
-        self.black = '\033[40m  '
-        self.cell = '\033[0m  '
+        self.white = '\033[47m  \033[0m'
+        self.lightcyan = '\033[106m  \033[0m'
+        self.cyan = '\033[46m  \033[0m'
+        self.lightpurple = '\033[105m  \033[0m'
+        self.purple = '\033[45m  \033[0m'
+        self.lightblue = '\033[104m  \033[0m'
+        self.blue = '\033[44m  \033[0m'
+        self.lightyellow = '\033[103m  \033[0m'
+        self.yellow = '\033[43m  \033[0m'
+        self.lightgreen = '\033[102m  \033[0m'
+        self.green = '\033[42m  \033[0m'
+        self.lightred = '\033[101m  \033[0m'
+        self.red = '\033[41m  \033[0m'
+        self.grey = '\033[100m  \033[0m'
+        self.black = '\033[40m  \033[0m'
+        self.cell = '\033[0m  \033[0m'
         self.void = '\033[0m'
 
     def which_color(self, color: str) -> tuple[str, str]:
@@ -78,7 +78,7 @@ def display(maze: list[list[Box]],
             pos: None | list[int] = None,
             start: None | list[int] = None,
             end: None | list[int] = None,
-            cursor: str = '█') -> None:
+            cursor: str = '\033[47m  \033[0m') -> None:
     """Render the maze in the terminal using ANSI background colors.
 
     Each cell is drawn as a 2-character block. Walls are shown as colored
@@ -115,9 +115,8 @@ def display(maze: list[list[Box]],
             cell = maze[y][x]
             walls = cell.has_wall()
             if pos and pos[0] == x and pos[1] == y:
-                cell_str = f'\033[47m{cursor} '
-                line += cell_str + cwall if 'E' in walls \
-                    else cell_str + c.cell
+                line += cursor + cwall if 'E' in walls \
+                    else cursor + c.cell
             elif start and start[0] == x and start[1] == y:
                 line += c.purple + cwall if 'E' in walls else c.purple + c.cell
             elif end and end[0] == x and end[1] == y:
