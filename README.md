@@ -1,73 +1,210 @@
 _This project has been created as part of the 42 curriculum by msuizu, pravet_
 
-**--- Description ---**
+## Description
 
-a_maze_ing is a program in python >3.10 that generates a maze based on a configuration file.\
-when executed, it will display the maze with some user interactions like regenerate a new maze,
-show/hide the shortest path, change wall colors ect.\
-an output file is also created with inside the maze in hexadecimal values,
-the entry and exit position, \
-and the shortest path between them with 'N', 'E', 'S' or 'W' caracters.
+***a_maze_ing*** is a Python 3.10+ program that generates a maze from a configuration file.
 
-**--- Instructions ---**
+When executed, it displays the maze in the terminal with several user interactions:
+regenerate a new maze, show/hide the shortest path, change wall colors or play the maze
+interactively with arrow keys.
 
-easy execution:
-`python3 a_maze_ing.py config.txt`
+An output file is also created containing the maze in hexadecimal values,
+the entry and exit coordinates, and the shortest path between them
+using the characters N, E, S, W.
 
-or with makefile:
+The maze always contains a visible "42" pattern drawn by fully closed cells, and supports
+a perfect mode (single path between entry and exit).
 
-`make install`	: install requirements
+---
 
-`make run`	: execute the main script
+## Instructions
 
-`make debug`	: run the script in debug mode
+**Easy execution:**
+```
+python3 a_maze_ing.py config.txt
+```
 
-`make clean`	: remove temporary files or caches
+**Or with the Makefile:**
 
-`make lint`	: execute flake8 and mypy
+| Command | Description |
+|---|---|
+| `make install` | Install requirements |
+| `make run` | Execute the main script |
+| `make debug` | Run the script in debug mode (pdb) |
+| `make clean` | Remove temporary files or caches (`__pycache__`, `.mypy_cache`) |
+| `make lint` | Run flake8 and mypy |
+| `make lint-strict` | Run flake8 and mypy in strict mode |
 
-`make lint-strict`	: execute flake8 and mypy in strict mode
+---
 
-**--- Resources ---**
+## Configuration File
 
-[display method](https://www.youtube.com/watch?v=W4FnZgiIukg)
+The config file uses one `KEY=VALUE` pair per line. Lines starting with `#` are comments.
 
-[dfs](https://en.wikipedia.org/wiki/Depth-first_search)  and  [bfs](https://en.wikipedia.org/wiki/Breadth-first_search)
+**Mandatory keys:**
 
-AI was used for performance improvements
+| Key | Description | Example |
+|---|---|---|
+| `WIDTH` | Maze width in number of cells | `WIDTH=12` |
+| `HEIGHT` | Maze height in number of cells | `HEIGHT=10` |
+| `ENTRY` | Entry coordinates (x,y) — between 0 and size-1 | `ENTRY=0,0` |
+| `EXIT` | Exit coordinates (x,y) — between 0 and size-1 | `EXIT=9,9` |
+| `OUTPUT_FILE` | Output file name | `OUTPUT_FILE=maze.txt` |
+| `PERFECT` | If `True`, only one path exists between entry and exit | `PERFECT=True` |
 
-**--- Configuration File ---**
+**Optional keys:**
 
-the config file contains the following mandatory keys:
+| Key | Description | Example |
+|---|---|---|
+| `SEED` | Integer seed for reproducibility | `SEED=42` |
+| `ANIMATION` | Display with a row-by-row animation | `ANIMATION=True` |
 
-{WIDTH} : the width of the maze \
-{HEIGHT} : the height of the maze\
-{ENTRY} : position of the entry in the maze in {x, y} format \
-{EXIT} : position of the exit (note that coordinates are between {0} and {size - 1}) \
-{OUTPUT_FILE} : the name of the output file \
-{PERFECT} : generation a maze with only one path available between entry and exit if set to True\
+NB: The seed of the maze in int or str, which means that every maze is reproductible with their seed.
 
-there are also other keys, although the maze can be generated without them:
+**Example config file:**
+```
+# Mandatory keys
+WIDTH=20
+HEIGHT=15
+ENTRY=0,0
+EXIT=19,14
+OUTPUT_FILE=maze.txt
+PERFECT=False
 
-{SEED} : the seed of the maze in int or str, which means that every maze is reproductible with their seed \
-{ANIMATION} : display the maze with an animation
+# Optional keys
+SEED=42
+ANIMATION=True
+```
 
-every setting must be one line by one, in format {key}={value} \
-#comments are also available
+---
 
-**--- Maze, Algorithm and Features ---**
+## Maze Generation Algorithm and Features
 
-DFS (Depth-First Search) was used for the maze generation,because it is popular and is similar to\
-the BFS (Breadth-First), which was used for the solving part.
+**DFS (Depth-First Search)** was chosen for the maze generation, because it is popular and is similar to
+the **BFS (Breadth-Firstm Search)** algorithm, which is used for solving part and guarantees the
+**shortest path** between entry and exit.
 
-an game interface was also added for the bonus part, using termios and tty libraries \
-to put terminal into cbreak mode, the aim is to catch user input directly without having to press enter
+### Features
 
-the MazeGenerator module is reusable by import it, create MazeGenerator object and `maze.generator()` .
+More precisely, the algorithm starts from cell (0,0), maintains a stack of visited cells,
+and at each step randomly picks an unvisited neighbour to move to, removing the wall between them.
+When no neighbour is available, it backtracks. This naturally produces mazes with **long winding corridors**
+and few junctions, which makes them visually interesting and challenging to solve.
 
-**--- Teamwork ---**
+DFS was also preferred because it is simple to implement correctly and its iterative version
+(using an explicit stack) avoids Python's recursion limit for large mazes.
 
-algorithm management and parsing was made by _msuizu_. \
-_pravet_ was in charge of the maze's display and the user interface.
+A game interface was also added for the bonus part, using termios and tty libraries
+to put terminal into cbreak mode, the aim is to catch user input directly without having to press enter.
 
-everything was ok, except for arranging the schedules at first.
+For the **imperfect mode**, dead-end cells get an additional wall removed to create loops
+and multiple paths between entry and exit.
+
+### Bonuses
+ - Display animation (`congif.txt`: `ANIMATION=True`, can be activate/deactivate with `stdin`: `6`)
+ - Playable maze (`stdin`: `5`)
+ - Change maze dimensions (`stdin`: `7`)
+ - Choose another cursor (`stdin`: `8`)
+ - 
+
+### Code Reusability
+
+The maze generation logic is encapsulated in the `MazeGenerator` module (`MazeGenerator.py`) \
+and packaged as a standalone pip-installable package (`mazegen-1.0.0-py3-none-any.whl`).
+The `MazeGenerator` module is reusable by import it, create `MazeGenerator` object and `maze.generator()` .
+
+**Installation:**
+```
+  (bash)
+
+pip install mazegen-1.0.0-py3-none-any.whl
+```
+
+**Basic usage:**
+```
+  (python)
+
+from MazeGenerator import Maze
+
+# Create and generate a maze (10 rows, 11 columns, perfect, seed 42)
+maze = Maze(height=10, width=11, start=[0, 0], end=[10, 9], perfect=True, seed=42)
+maze.generate()
+
+# Access the grid: maze.m[row][col] returns a Box object
+cell = maze.m[0][0]
+print(cell.has_wall())   # e.g. {'N', 'W'} — set of walls present
+
+# Access the shortest path (set of (x,y) tuples)
+print(maze.sv)
+
+# Access the directions of the shortest path (list of 'N','E','S','W')
+print(maze.dir)
+
+# Access the '42' pattern cell positions
+print(maze.ft)
+```
+
+**Custom parameters:**
+```
+  (python)
+
+# Imperfect maze with a random seed
+import random
+maze = Maze(height=20, width=25, start=[0, 0], end=[24, 19],
+            perfect=False, seed=random.randint(0, 2147483647))
+maze.generate()
+```
+
+**Building the package from source:**
+```
+  (bash)
+
+pip install build
+python -m build
+# Output: dist/mazegen-1.0.0-py3-none-any.whl
+```
+
+---
+
+## Resources
+
+- [ANSI terminal colors (display method)](https://www.youtube.com/watch?v=W4FnZgiIukg)
+- [Depth-First Search — Wikipedia](https://en.wikipedia.org/wiki/Depth-first_search)
+- [Breadth-First Search — Wikipedia](https://en.wikipedia.org/wiki/Breadth-first_search)
+- [Maze generation algorithms — Wikipedia](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
+- [Python packaging guide](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
+
+**AI usage:** Claude (Anthropic) was used to identify bugs (incorrect wall coherence in `dead_end()`,
+inverted path direction in `solver()`). It was also used to generate or standardize docstrings
+for some functions.
+All AI-generated content was reviewed, tested, and understood before being included.
+
+---
+
+## Teamwork
+
+**_msuizu_** — maze generation algorithms (`MazeGenerator.py`, `generator.py`), solver, and config parsing.
+
+**_pravet_** — terminal display (`display.py`) and user interface (`a_maze_ing.py`), including
+the interactive play mode with arrow key navigation.
+
+**Planning:** We initially planned to split the work strictly, with a meeting point once both
+parts were ready to integrate. In practice, integration took longer than expected because the
+display relied on internal details of `MazeGenerator` that evolved during development. We had to
+adapted our schedules for working in different time, because we didn't finish the _piscine Python_ projetcs
+at the same time.
+
+**What worked well:** Everything was OK. The algorithm/display split was clean and let both members
+satisfied with their work. We have tested, debugged and created bonuses together.
+much easier.
+
+**What could be improved:** Maybe more bonuses...
+
+**Tools used:**
+ - Python 3.13.1
+ - flake8 7.3.0 (mccabe: 0.7.0, pycodestyle: 2.14.0, pyflakes: 3.4.0), compatible with
+ CPython 3.10.12 on Linux
+ - mypy 1.19.1 (compiled: yes)
+ - git 2.34.1
+ - Claude Sonnet 4.6 & Opus 4.5 (AI review), Anthropic
+ - VS Code 1.109.5

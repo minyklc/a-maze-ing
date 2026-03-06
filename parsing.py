@@ -1,8 +1,19 @@
 #!/usr/bin/env python3
+
 from random import randint
+from typing import Any
 
 
 def check_value(key: str, value: str) -> int:
+    """Validate the format of a single config key-value pair.
+
+    Args:
+        key: The config key in lowercase (e.g. 'width', 'entry').
+        value: The raw string value from the config file.
+
+    Returns:
+        0 if valid, 1 if invalid (prints an error message).
+    """
     try:
         if key == 'width' or key == 'height':
             int(value)
@@ -21,7 +32,7 @@ def check_value(key: str, value: str) -> int:
 
     try:
         if key == 'output_file':
-            with open(value, 'r'):
+            with open(value, 'w'):
                 ...
     except Exception:
         print('error: output_file must be valid, for example -> maze.txt')
@@ -37,8 +48,21 @@ def check_value(key: str, value: str) -> int:
     return 0
 
 
-def parsing(file: str) -> dict:
-    r = {}
+def parsing(file: str) -> dict[Any, Any]:
+    """Parse and validate a maze configuration file.
+
+    Reads KEY=VALUE pairs, ignores comment lines starting with '#',
+    validates all mandatory keys, and converts values to proper types.
+
+    Args:
+        file: Path to the configuration file.
+
+    Returns:
+        A dict with typed values (width, height as int; entry, exit as
+        list[int]; perfect as bool; seed as int; etc.), or an empty dict
+        on any error.
+    """
+    r = dict[str, Any]()
     try:
         with open(file, 'r') as f:
             for line in f:
@@ -57,10 +81,10 @@ def parsing(file: str) -> dict:
                         r.update({k: v})
     except FileNotFoundError:
         print('error: "config.txt" file not found')
-        return {}
+        return dict()
     except NameError:
         print(r'error: each paramater must be in format key=value\n')
-        return {}
+        return dict()
 
     mandatory = ['width', 'height', 'entry', 'exit', 'output_file', 'perfect']
     try:
@@ -69,25 +93,33 @@ def parsing(file: str) -> dict:
                 raise NameError(m)
     except NameError as n:
         print(f'error: "{n}" key not found in config.txt')
-        return {}
+        return dict()
 
     try:
-        r['width'] = int(r['width'])
-        r['height'] = int(r['height'])
-        if r['width'] < 2 or r['height'] > 2147483647 \
-                or r['height'] < 2 or r['width'] > 2147483647:
+        v1 = int(r['width'])
+        v2 = int(r['height'])
+        if v1 < 2 or v2 > 2147483647 \
+                or v2 < 2 or v1 > 2147483647:
             raise ValueError('width and length must be \
                              between 2 and 2147483647')
+        r.pop("width")
+        r.update({'width': v1})
+        r.pop("height")
+        r.update({'height': v2})
 
-        i = r['entry'].find(',')
-        r['entry'] = [int(r['entry'][:i]), int(r['entry'][i+1:])]
-        if r['entry'][0] >= r['width'] or r['entry'][1] >= r['height']:
+        i = str(r['entry']).find(',')
+        e1 = [int(str(r['entry'])[:i]), int(str(r['entry'])[i+1:])]
+        if e1[0] >= v1 or e1[1] >= v2:
             raise ValueError('entry must be in height and width range')
+        r.pop("entry")
+        r.update({'entry': e1})
 
-        i = r['exit'].find(',')
-        r['exit'] = [int(r['exit'][:i]), int(r['exit'][i+1:])]
-        if r['exit'][0] >= r['width'] or r['exit'][1] >= r['height']:
+        i = str(r['exit']).find(',')
+        e2 = [int(str(r['exit'])[:i]), int(str(r['exit'])[i+1:])]
+        if e2[0] >= v1 or e2[1] >= v2:
             raise ValueError('exit must be in height and width range')
+        r.pop("exit")
+        r.update({'exit': e2})
 
         if any(i < 0 for i in r['entry']) or any(i < 0 for i in r['exit']):
             raise ValueError('entry or exit has negative value')
@@ -111,7 +143,7 @@ def parsing(file: str) -> dict:
         return r
     except ValueError as v:
         print(f'error: {v}')
-        return {}
+        return dict()
 
 
 if __name__ == "__main__":
