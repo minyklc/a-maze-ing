@@ -172,8 +172,8 @@ python -m build
 - [Maze generation algorithms — Wikipedia](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
 - [Python packaging guide](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
 
-**AI usage:** Claude (Anthropic) was used to identify bugs (incorrect wall coherence in `dead_end()`, \
-inverted path direction in `solver()`). It was also used to generate or standardize docstrings \
+**AI usage:** Claude (Anthropic) was used to identify bugs (incorrect wall coherence in `dead_end()`,
+inverted path direction in `solver()`). It was also used to generate or standardize docstrings
 for some functions.
 All AI-generated content was reviewed, tested, and understood before being included.
 
@@ -183,16 +183,16 @@ All AI-generated content was reviewed, tested, and understood before being inclu
 
 **_msuizu_** — maze generation algorithms (`MazeGenerator.py`, `generator.py`), solver, and config parsing.
 
-**_pravet_** — terminal display (`display.py`) and user interface (`a_maze_ing.py`), including \
+**_pravet_** — terminal display (`display.py`) and user interface (`a_maze_ing.py`), including
 the interactive play mode with arrow key navigation.
 
-**Planning:** We initially planned to split the work strictly, with a meeting point once both \
-parts were ready to integrate. In practice, integration took longer than expected because the \
-display relied on internal details of `MazeGenerator` that evolved during development. We had to \
-adapted our schedules for working in different time, because we didn't finish the _piscine Python_ projetcs \
+**Planning:** We initially planned to split the work strictly, with a meeting point once both
+parts were ready to integrate. In practice, integration took longer than expected because the
+display relied on internal details of `MazeGenerator` that evolved during development. We had to
+adapted our schedules for working in different time, because we didn't finish the _piscine Python_ projetcs
 at the same time.
 
-**What worked well:** Everything was OK. The algorithm/display split was clean and let both members \
+**What worked well:** Everything was OK. The algorithm/display split was clean and let both members
 satisfied with their work. We have tested, debugged and created bonuses together.
 much easier.
 
@@ -200,7 +200,7 @@ much easier.
 
 **Tools used:**
  - Python 3.13.1
- - flake8 7.3.0 (mccabe: 0.7.0, pycodestyle: 2.14.0, pyflakes: 3.4.0), compatible with \
+ - flake8 7.3.0 (mccabe: 0.7.0, pycodestyle: 2.14.0, pyflakes: 3.4.0), compatible with
  CPython 3.10.12 on Linux
  - mypy 1.19.1 (compiled: yes)
  - git 2.34.1
