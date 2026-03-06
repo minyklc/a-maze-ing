@@ -257,9 +257,9 @@ def ask_dimensions(param: dict) -> bool:  # type: ignore[type-arg]
                                 cur_exit[1] < new_h) else [new_w-1, new_h-1]
 
     raw_entry = input(f'Enter new entry x,y (0-{new_w-1}, 0-{new_h-1})'
-          f' [default: {cur_entry[0]},{cur_entry[1]}]: ')
+                      f' [default: {cur_entry[0]},{cur_entry[1]}]: ')
     raw_exit = input(f'Enter new exit  x,y (0-{new_w-1}, 0-{new_h-1})'
-          f' [default: {cur_exit[0]},{cur_exit[1]}]: ')
+                     f' [default: {cur_exit[0]},{cur_exit[1]}]: ')
 
     try:
         entry = ([int(v) for v in raw_entry.split(',')]

@@ -8,4 +8,4 @@ PERFECT=False
 
 # additional keys
 SEED=42
-ANIMATION=True
+ANIMATION=False
