@@ -5,6 +5,15 @@ from typing import Any
 
 
 def check_value(key: str, value: str) -> int:
+    """Validate the format of a single config key-value pair.
+
+    Args:
+        key: The config key in lowercase (e.g. 'width', 'entry').
+        value: The raw string value from the config file.
+
+    Returns:
+        0 if valid, 1 if invalid (prints an error message).
+    """
     try:
         if key == 'width' or key == 'height':
             int(value)
@@ -40,6 +49,19 @@ def check_value(key: str, value: str) -> int:
 
 
 def parsing(file: str) -> dict[Any, Any]:
+    """Parse and validate a maze configuration file.
+
+    Reads KEY=VALUE pairs, ignores comment lines starting with '#',
+    validates all mandatory keys, and converts values to proper types.
+
+    Args:
+        file: Path to the configuration file.
+
+    Returns:
+        A dict with typed values (width, height as int; entry, exit as
+        list[int]; perfect as bool; seed as int; etc.), or an empty dict
+        on any error.
+    """
     r = dict[str, Any]()
     try:
         with open(file, 'r') as f:

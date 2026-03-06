@@ -1,10 +1,33 @@
 #!/usr/bin/env python3
+
 from MazeGenerator import Box
 import time
 
 
 class Color:
+    """Container for ANSI terminal background color escape sequences.
+
+    Provides colored block strings used to render maze cells and walls,
+    and a helper method to select a wall/highlight color pair by name.
+
+    Attributes:
+        white, lightcyan, cyan, lightpurple, purple, lightblue, blue,
+        lightyellow, yellow, lightgreen, green, lightred, red, grey,
+        black: Strings representing ANSI escape sequences for bg colors.
+        cell: String representing the default cell color (no background).
+        void: String representing the default void color (no background).
+
+    Methods:
+        which_color(color: str) -> tuple[str, str]:
+            Returns a tuple of (wall_color, highlight_color) based on
+            the input color name.
+    """
     def __init__(self) -> None:
+        """Initialize ANSI escape color strings for terminal rendering.
+
+        Each attribute is a background color code followed by two spaces,
+        ready to be printed as a colored cell block in the terminal.
+        """
         self.white = '\033[47m  '
         self.lightcyan = '\033[106m  '
         self.cyan = '\033[46m  '
@@ -24,18 +47,27 @@ class Color:
         self.void = '\033[0m'
 
     def which_color(self, color: str) -> tuple[str, str]:
+        """Return the wall color and highlight color for the given color name.
+
+        Args:
+            color: Color name ('purple', 'yellow', 'blue', 'cyan', 'green',
+                   or any other string which defaults to red).
+
+        Returns:
+            A tuple (wall_color, highlight_color) as ANSI escape strings.
+        """
         if color == 'purple':
-            return self.purple, self.lightpurple
+            return self.lightblue, self.lightpurple
         elif color == 'yellow':
-            return self.yellow, self.lightyellow
+            return self.yellow, self.lightred
         elif color == 'blue':
-            return self.blue, self.lightblue
+            return self.blue, self.lightcyan
         elif color == 'cyan':
-            return self.cyan, self.lightcyan
+            return self.cyan, self.lightgreen
         elif color == 'green':
-            return self.green, self.lightgreen
+            return self.green, self.purple
         else:
-            return self.red, self.lightred
+            return self.red, self.lightyellow
 
 
 def display(maze: list[list[Box]],
@@ -46,6 +78,26 @@ def display(maze: list[list[Box]],
             pos: None | list[int] = None,
             start: None | list[int] = None,
             end: None | list[int] = None) -> None:
+    """Render the maze in the terminal using ANSI background colors.
+
+    Each cell is drawn as a 2-character block. Walls are shown as colored
+    blocks, open passages as blank cells. Special cells are highlighted:
+    the player position in white, entry in purple, exit in light purple,
+    the shortest path in grey, and the '42' pattern in the highlight color.
+
+    Args:
+        maze: 2D grid of Box objects indexed as maze[row][col].
+        forty_two: Set of (x, y) tuples forming the '42' pattern.
+        path: Set of (x, y) tuples on the shortest path to highlight.
+        color: Wall color name passed to Color.which_color().
+        animation: If True, adds a short sleep between rows for visual effect.
+        pos: Current player position as [x, y], or None if not in play mode.
+        start: Entry cell coordinates as [x, y], or None.
+        end: Exit cell coordinates as [x, y], or None.
+
+    Returns:
+        None. Prints the maze directly to the terminal.
+    """
 
     c = Color()
     cwall, clight = c.which_color(color)

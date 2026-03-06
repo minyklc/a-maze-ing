@@ -12,6 +12,15 @@ from parsing import parsing
 
 
 def up(pos: list[int], maze: list[list[Box]]) -> int:
+    """Check if the player can move north from the current position.
+
+    Args:
+        pos: Current player position as [x, y].
+        maze: 2D grid of Box objects.
+
+    Returns:
+        1 if no north wall, 0 if blocked.
+    """
     n = {1, 3, 5, 7, 9, 11, 13, 15}
     if maze[pos[1]][pos[0]].walls in n:
         return 0
@@ -19,6 +28,15 @@ def up(pos: list[int], maze: list[list[Box]]) -> int:
 
 
 def down(pos: list[int], maze: list[list[Box]]) -> int:
+    """Check if the player can move south from the current position.
+
+    Args:
+        pos: Current player position as [x, y].
+        maze: 2D grid of Box objects.
+
+    Returns:
+        1 if no south wall, 0 if blocked.
+    """
     n = {4, 5, 6, 7, 12, 13, 14, 15}
     if maze[pos[1]][pos[0]].walls in n:
         return 0
@@ -26,6 +44,15 @@ def down(pos: list[int], maze: list[list[Box]]) -> int:
 
 
 def left(pos: list[int], maze: list[list[Box]]) -> int:
+    """Check if the player can move west from the current position.
+
+    Args:
+        pos: Current player position as [x, y].
+        maze: 2D grid of Box objects.
+
+    Returns:
+        1 if no west wall, 0 if blocked.
+    """
     n = {8, 9, 10, 11, 12, 13, 14, 15}
     if maze[pos[1]][pos[0]].walls in n:
         return 0
@@ -33,6 +60,15 @@ def left(pos: list[int], maze: list[list[Box]]) -> int:
 
 
 def right(pos: list[int], maze: list[list[Box]]) -> int:
+    """Check if the player can move east from the current position.
+
+    Args:
+        pos: Current player position as [x, y].
+        maze: 2D grid of Box objects.
+
+    Returns:
+        1 if no east wall, 0 if blocked.
+    """
     n = {2, 3, 6, 7, 10, 11, 14, 15}
     if maze[pos[1]][pos[0]].walls in n:
         return 0
@@ -42,6 +78,22 @@ def right(pos: list[int], maze: list[list[Box]]) -> int:
 def ft_interface(maze: Maze, entry: list[int],
                  exit: list[int], path: set[tuple[int, int]],
                  color: str) -> None:
+    """Run the interactive play mode where the user navigates the maze.
+
+    Puts the terminal into cbreak mode to capture arrow key inputs directly
+    without requiring Enter. The player moves with arrow keys and wins when
+    reaching the exit cell. Press 'q' to quit early.
+
+    Args:
+        maze: The current Maze object to navigate.
+        entry: Starting position as [x, y].
+        exit: Target position as [x, y].
+        path: Current shortest path set (displayed as overlay if non-empty).
+        color: Wall color name for the display.
+
+    Returns:
+        None.
+    """
     pos = entry[:]
     fd = 0
     stt = termios.tcgetattr(fd)
@@ -98,6 +150,15 @@ def ft_interface(maze: Maze, entry: list[int],
 
 
 def interaction() -> None:
+    """Print the list of available user commands to the terminal.
+
+    This function is called after displaying the maze to show the user what
+    actions they can take. The user can refresh the maze, generate a new one,
+    toggle the shortest path display, change wall colors, or enter play mode.
+
+    Returns:
+        None.
+    """
     print()
     print('1 = refresh')
     print('2 = generate new maze')
@@ -109,6 +170,15 @@ def interaction() -> None:
 
 
 def main() -> None:
+    """Entry point: parse config, generate maze, and run the interaction loop.
+
+    Reads the config file path from sys.argv, generates the maze, displays it,
+    then waits for user input to refresh, regenerate, toggle the path,
+    change colors, or enter play mode.
+
+    Returns:
+        None.
+    """
     args = sys.argv
     if len(args) != 2:
         print('expected execution> python3 a_maze_ing.py config.txt')
