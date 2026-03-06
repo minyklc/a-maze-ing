@@ -6,6 +6,7 @@ import time
 import termios
 import tty
 import random
+from typing import Callable
 from MazeGenerator import Maze, Box
 from generator import generator
 from display import display
@@ -151,7 +152,7 @@ def ft_interface(maze: Maze, entry: list[int],
 
 
 def make_callback(ft: set[tuple[int, int]],
-                  color: str) -> None:
+                  color: str) -> Callable[[list[list[Box]]], None]:
     """Return an animation callback that clears and redraws the maze grid.
 
     The returned function can be passed to maze.generate() so the maze
@@ -160,30 +161,108 @@ def make_callback(ft: set[tuple[int, int]],
     Args:
         ft: The '42' pattern cell positions for correct display.
         color: Wall color name used for the display.
+
+    Returns:
+        A callback function accepting the current grid as argument.
     """
     def callback(grid: list[list[Box]]) -> None:
         os.system('clear')
         display(grid, ft, set(), color, False)
         time.sleep(0.01)
-    return callback  # type: ignore[return-value]
+    return callback
 
 
-def interaction() -> None:
+def ask_dimensions(param: dict) -> bool:  # type: ignore[type-arg]
+    """Prompt the user for new maze dimensions and new entry/exit coordinates.
+
+    Reads width and height from stdin, then always asks for new entry and
+    exit coordinates. If the current coordinates are still valid for the
+    new dimensions, they are shown as defaults.
+    Updates param in place on success.
+
+    Args:
+        param: The current config dict, modified in place on success.
+
+    Returns:
+        True if dimensions were updated, False if the user cancelled
+        or entered invalid values.
+    """
+    print('Enter new width (>= 2): ', end='', flush=True)
+    raw_w = sys.stdin.readline().rstrip()
+    print('Enter new height (>= 2): ', end='', flush=True)
+    raw_h = sys.stdin.readline().rstrip()
+
+    try:
+        new_w = int(raw_w)
+        new_h = int(raw_h)
+        if new_w < 2 or new_h < 2:
+            raise ValueError
+    except ValueError:
+        print('error: width and height must be integers >= 2')
+        return False
+
+    cur_entry = param['entry']
+    cur_exit = param['exit']
+    default_entry = cur_entry if (cur_entry[0] < new_w
+                                  and cur_entry[1] < new_h) else [0, 0]
+    default_exit = cur_exit if (cur_exit[0] < new_w and
+                                cur_exit[1] < new_h) else [new_w-1, new_h-1]
+
+    print(f'Enter new entry x,y (0-{new_w-1}, 0-{new_h-1})'
+          f' [default: {default_entry[0]},{default_entry[1]}]: ',
+          end='', flush=True)
+    raw_entry = sys.stdin.readline().rstrip()
+    print(f'Enter new exit  x,y (0-{new_w-1}, 0-{new_h-1})'
+          f' [default: {default_exit[0]},{default_exit[1]}]: ',
+          end='', flush=True)
+    raw_exit = sys.stdin.readline().rstrip()
+
+    try:
+        entry = ([int(v) for v in raw_entry.split(',')]
+                 if raw_entry else default_entry)
+        exit_ = ([int(v) for v in raw_exit.split(',')]
+                 if raw_exit else default_exit)
+        ex, ey = entry
+        ox, oy = exit_
+        if ex < 0 or ex >= new_w or ey < 0 or ey >= new_h:
+            raise ValueError('entry out of bounds')
+        if ox < 0 or ox >= new_w or oy < 0 or oy >= new_h:
+            raise ValueError('exit out of bounds')
+        if [ex, ey] == [ox, oy]:
+            raise ValueError('entry and exit must differ')
+    except ValueError as v:
+        print(f'error: {v}')
+        return False
+
+    param['width'] = new_w
+    param['height'] = new_h
+    param['entry'] = entry
+    param['exit'] = exit_
+    return True
+
+
+def interaction(anim: bool) -> None:
     """Print the list of available user commands to the terminal.
 
     This function is called after displaying the maze to show the user what
     actions they can take. The user can refresh the maze, generate a new one,
     toggle the shortest path display, change wall colors, or enter play mode.
 
+    Args:
+        anim: Current animation state, shown next to option 6.
+
     Returns:
         None.
     """
+    anim_status = 'ON' if anim else 'OFF'
     print()
     print('1 = refresh')
     print('2 = generate new maze')
     print('3 = show/hide the shortest path')
     print('4 = change wall colours')
     print('5 = play the maze')
+    print(f'6 = enable/disable generation animation (currently {anim_status})')
+    print('7 = change maze dimensions')
     print('q = quit')
     print()
 
@@ -222,6 +301,7 @@ def main() -> None:
     color = colors[i]
 
     try:
+        cb = make_callback(set(), color) if anim else None
         maze = generator(param)
     except ValueError:
         print('error: entry or exit in 42 pattern '
@@ -229,12 +309,12 @@ def main() -> None:
         return
 
     os.system('clear')
-    display(maze.m, maze.ft, path, color, anim)
+    display(maze.m, maze.ft, path, color, False)
     print(f'seed: {maze.d}')
     if not maze.ft:
         print("warning: 42 pattern couldn't be reseolved "
               "(must be at least 9x7)")
-    interaction()
+    interaction(anim)
     for line in sys.stdin:
         if line.rstrip() == 'q':
             break
@@ -242,7 +322,8 @@ def main() -> None:
             ...
         elif line.rstrip() == '2':  # generate new random maze
             param['seed'] = random.randint(0, 2147483647)
-            maze = generator(param)
+            cb = make_callback(set(), color) if anim else None
+            maze = generator(param, cb)
             if path:
                 path = maze.sv
         elif line.rstrip() == '3':  # show/hide shortest path
@@ -257,12 +338,29 @@ def main() -> None:
             color = colors[i]
         elif line.rstrip() == '5':  # play the maze
             ft_interface(maze, param['entry'], param['exit'], path, color)
+        elif line.rstrip() == '6':  # toggle animation
+            anim = not anim
+        elif line.rstrip() == '7':  # change maze dimensions
+            if ask_dimensions(param):
+                param['seed'] = random.randint(0, 2147483647)
+                path = set()
+                try:
+                    cb = make_callback(set(), color) if anim else None
+                    maze = generator(param, cb)
+                except ValueError:
+                    print('error: entry or exit in 42 pattern '
+                          '(please choose other coordinates...)')
+                    print('\nPress Enter to continue...')
+                    sys.stdin.readline()
+            else:
+                print('\nPress Enter to continue...')
+                sys.stdin.readline()
         else:
             print('please select another key...')
         os.system('clear')
         display(maze.m, maze.ft, path, color, anim)
         print(f'seed: {maze.d}')
-        interaction()
+        interaction(anim)
 
     print("Exit")
 

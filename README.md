@@ -101,8 +101,10 @@ For the **imperfect mode**, dead-end cells get an additional wall removed to cre
 and multiple paths between entry and exit.
 
 ### Bonuses
- - Display animation (`congif.txt`: `ANIMATION=True`)
+ - Display animation (`congif.txt`: `ANIMATION=True`, can be activate/deactivate with `stdin`: `6`)
  - Playable maze (`stdin`: `5`)
+ - Change maze dimensions (`stdin`: `7`)
+ - 
  - 
 
 ### Code Reusability
