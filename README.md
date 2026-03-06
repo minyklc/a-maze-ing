@@ -4,16 +4,16 @@ _This project has been created as part of the 42 curriculum by msuizu, pravet_
 
 ***a_maze_ing*** is a Python 3.10+ program that generates a maze from a configuration file.
 
-When executed, it displays the maze in the terminal with several user interactions: \
+When executed, it displays the maze in the terminal with several user interactions:
 regenerate a new maze, show/hide the shortest path, change wall colors or play the maze
-interactively with arrow keys. \
+interactively with arrow keys.
 
 An output file is also created containing the maze in hexadecimal values,
 the entry and exit coordinates, and the shortest path between them
-using the characters N, E, S, W. \
+using the characters N, E, S, W.
 
 The maze always contains a visible "42" pattern drawn by fully closed cells, and supports
-a perfect mode (single path between entry and exit). \
+a perfect mode (single path between entry and exit).
 
 ---
 
