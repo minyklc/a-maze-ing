@@ -80,24 +80,24 @@ ANIMATION=True
 
 ## Maze Generation Algorithm and Features
 
-**DFS (Depth-First Search)** was chosen for the maze generation, because it is popular and is similar to \
-the **BFS (Breadth-Firstm Search)** algorithm, which is used for solving part and guarantees the \
+**DFS (Depth-First Search)** was chosen for the maze generation, because it is popular and is similar to
+the **BFS (Breadth-Firstm Search)** algorithm, which is used for solving part and guarantees the
 **shortest path** between entry and exit.
 
 ### Features
 
-More precisely, the algorithm starts from cell (0,0), maintains a stack of visited cells,\
+More precisely, the algorithm starts from cell (0,0), maintains a stack of visited cells,
 and at each step randomly picks an unvisited neighbour to move to, removing the wall between them.
-When no neighbour is available, it backtracks. This naturally produces mazes with **long winding corridors**\
+When no neighbour is available, it backtracks. This naturally produces mazes with **long winding corridors**
 and few junctions, which makes them visually interesting and challenging to solve.
 
 DFS was also preferred because it is simple to implement correctly and its iterative version
 (using an explicit stack) avoids Python's recursion limit for large mazes.
 
-A game interface was also added for the bonus part, using termios and tty libraries \
+A game interface was also added for the bonus part, using termios and tty libraries
 to put terminal into cbreak mode, the aim is to catch user input directly without having to press enter.
 
-For the **imperfect mode**, dead-end cells get an additional wall removed to create loops \
+For the **imperfect mode**, dead-end cells get an additional wall removed to create loops
 and multiple paths between entry and exit.
 
 ### Bonuses
