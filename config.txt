@@ -4,8 +4,8 @@ HEIGHT=10
 ENTRY=0,0
 EXIT=10,9
 OUTPUT_FILE=maze.txt
-PERFECT=False
+PERFECT=True
 
 # additional keys
 SEED=42
-#ANIMATION=True
+ANIMATION=True

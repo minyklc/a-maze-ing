@@ -2,6 +2,7 @@
 
 import sys
 import os
+import time
 import termios
 import tty
 import random
@@ -143,10 +144,28 @@ def ft_interface(maze: Maze, entry: list[int],
                                     False, pos, maze.s, maze.e)
                             print('up down right left or q')
         if pos == exit:
-            print('congratulation !')
+            print('Congratulations !')
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, stt)
     print("Exited")
+
+
+def make_callback(ft: set[tuple[int, int]],
+                  color: str) -> None:
+    """Return an animation callback that clears and redraws the maze grid.
+
+    The returned function can be passed to maze.generate() so the maze
+    is displayed live as each wall is removed during generation.
+
+    Args:
+        ft: The '42' pattern cell positions for correct display.
+        color: Wall color name used for the display.
+    """
+    def callback(grid: list[list[Box]]) -> None:
+        os.system('clear')
+        display(grid, ft, set(), color, False)
+        time.sleep(0.01)
+    return callback  # type: ignore[return-value]
 
 
 def interaction() -> None:

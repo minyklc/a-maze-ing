@@ -279,6 +279,8 @@ class Maze:
                 self.m[new[1]][new[0]].remove_wall(next, True)
                 stack.append(new[:])
                 visited.add(tuple(new[:]))
+                if callback:
+                    callback(self.m)
             else:
                 stack.pop(-1)
 
@@ -337,11 +339,17 @@ class Maze:
             r.append('W')
         return r
 
-    def imperfect_maze(self) -> None:
+    def imperfect_maze(self,
+                       callback: Optional[Callable[[list[list['Box']]], None]]
+                       = None) -> None:
         """Generate an imperfect maze using DFS with extra wall openings.
 
         Based on DFS like perfect_maze, but dead-end cells get an additional
         wall removed to create loops and multiple paths.
+
+        Args:
+            callback: Optional function called after each wall removal,
+                      receiving the current grid for live animation.
 
         Returns:
             None.
@@ -370,6 +378,8 @@ class Maze:
                 self.m[new[1]][new[0]].remove_wall(next, True)
                 stack.append(new[:])
                 visited.add(tuple(new[:]))
+                if callback:
+                    callback(self.m)
             elif state == 0:
                 state = 1
                 last = stack.pop(-1)
@@ -381,6 +391,8 @@ class Maze:
                 if last != [0, 0] and tuple(last2) not in self.ft:
                     self.m[last[1]][last[0]].remove_wall(str(last_d))
                     self.m[last2[1]][last2[0]].remove_wall(str(last_d), True)
+                    if callback:
+                        callback(self.m)
             else:
                 stack.pop(-1)
 

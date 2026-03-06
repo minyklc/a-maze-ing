@@ -73,6 +73,7 @@ PERFECT=False
 
 # Optional keys
 SEED=42
+ANIMATION=True
 ```
 
 ---
@@ -98,6 +99,11 @@ to put terminal into cbreak mode, the aim is to catch user input directly withou
 
 For the **imperfect mode**, dead-end cells get an additional wall removed to create loops \
 and multiple paths between entry and exit.
+
+### Bonuses
+ - Display animation (`congif.txt`: `ANIMATION=True`)
+ - Playable maze (`stdin`: `5`)
+ - 
 
 ### Code Reusability
 
@@ -200,16 +206,3 @@ much easier.
  - git 2.34.1
  - Claude Sonnet 4.6 & Opus 4.5 (AI review), Anthropic
  - VS Code 1.109.5
-
-
-
-
-
-
-
-
-
-
-Bonuses :
- - playable maze
- - display animation

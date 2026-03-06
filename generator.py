@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from MazeGenerator import Maze
-from typing import Any
+from MazeGenerator import Box, Maze
+from typing import Any, Callable, Optional
 
 
 def maze_output(maze: Maze, file: str) -> None:
@@ -35,12 +35,16 @@ def maze_output(maze: Maze, file: str) -> None:
         f.write('\n')  # add \n at the end of the file
 
 
-def generator(param: dict[str, Any]) -> Maze:
+def generator(param: dict[str, Any],
+              callback: Optional[Callable[[list[list['Box']]], None]] = None
+              ) -> Maze:
     """Build and return a Maze from parsed config parameters.
 
     Args:
         param: Dictionary from parsing(), containing width, height,
                entry, exit, perfect, seed, and output_file keys.
+        callback: Optional animation callback passed to maze.generate().
+
 
     Returns:
         The generated and solved Maze object.
@@ -52,7 +56,7 @@ def generator(param: dict[str, Any]) -> Maze:
     perfect = param['perfect']
     seed = param['seed']
     maze = Maze(height, width, start, end, perfect, seed)
-    maze.generate()
+    maze.generate(callback)
     maze_output(maze, param['output_file'])
     return maze
 
