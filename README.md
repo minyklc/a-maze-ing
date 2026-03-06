@@ -101,11 +101,11 @@ For the **imperfect mode**, dead-end cells get an additional wall removed to cre
 and multiple paths between entry and exit.
 
 ### Bonuses
+ - Generation animation added (total 3 types of animation)
  - Display animation (`congif.txt`: `ANIMATION=True`, can be activate/deactivate with `stdin`: `6`)
  - Playable maze (`stdin`: `5`)
  - Change maze dimensions (`stdin`: `7`)
  - Choose another cursor (`stdin`: `8`)
- - 
 
 ### Code Reusability
 
@@ -208,3 +208,4 @@ much easier.
  - git 2.34.1
  - Claude Sonnet 4.6 & Opus 4.5 (AI review), Anthropic
  - VS Code 1.109.5
+ - Zed 0.226.4
