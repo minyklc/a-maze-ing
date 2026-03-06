@@ -79,7 +79,7 @@ def right(pos: list[int], maze: list[list[Box]]) -> int:
 
 def ft_interface(maze: Maze, entry: list[int],
                  exit: list[int], path: set[tuple[int, int]],
-                 color: str) -> None:
+                 color: str, cursor: str = '█') -> None:
     """Run the interactive play mode where the user navigates the maze.
 
     Puts the terminal into cbreak mode to capture arrow key inputs directly
@@ -92,6 +92,7 @@ def ft_interface(maze: Maze, entry: list[int],
         exit: Target position as [x, y].
         path: Current shortest path set (displayed as overlay if non-empty).
         color: Wall color name for the display.
+        cursor: Character displayed on the player's cell.
 
     Returns:
         None.
@@ -121,28 +122,28 @@ def ft_interface(maze: Maze, entry: list[int],
                             pos[1] -= 1
                             os.system('clear')
                             display(maze.m, maze.ft, path, color,
-                                    False, pos, maze.s, maze.e)
+                                    False, pos, maze.s, maze.e, cursor)
                             print('up down right left or q')
                     elif c3 == 'B':  # down
                         if down(pos, maze.m) == 1:
                             pos[1] += 1
                             os.system('clear')
                             display(maze.m, maze.ft, path, color,
-                                    False, pos, maze.s, maze.e)
+                                    False, pos, maze.s, maze.e, cursor)
                             print('up down right left or q')
                     elif c3 == 'C':  # right
                         if right(pos, maze.m) == 1:
                             pos[0] += 1
                             os.system('clear')
                             display(maze.m, maze.ft, path, color,
-                                    False, pos, maze.s, maze.e)
+                                    False, pos, maze.s, maze.e, cursor)
                             print('up down right left or q')
                     elif c3 == 'D':  # left
                         if left(pos, maze.m) == 1:
                             pos[0] -= 1
                             os.system('clear')
                             display(maze.m, maze.ft, path, color,
-                                    False, pos, maze.s, maze.e)
+                                    False, pos, maze.s, maze.e, cursor)
                             print('up down right left or q')
         if pos == exit:
             print('Congratulations !')
@@ -170,6 +171,61 @@ def make_callback(ft: set[tuple[int, int]],
         display(grid, ft, set(), color, False)
         time.sleep(0.01)
     return callback
+
+
+def choose_cursor() -> str:
+    """Prompt the user to pick a cursor character for the play mode.
+
+    Displays a numbered list of available cursors (emojis and ASCII).
+    The user enters the corresponding number, or presses Enter to keep
+    the current cursor. Returns the chosen character, or an empty string
+    if the input is invalid (caller keeps the current cursor).
+
+    Returns:
+        The chosen cursor string, or '' on invalid input.
+    """
+    cursors = [
+        ('🧑', 'person'),
+        ('👩', 'girl'),
+        ('👦', 'boy'),
+        ('🐱', 'cat'),
+        ('🐶', 'dog'),
+        ('🐭', 'mouse'),
+        ('🐸', 'frog'),
+        ('👾', 'alien'),
+        ('🔥', 'fire'),
+        ('🪨', 'rock'),
+        ('🌪️', 'air'),
+        ('💧', 'water'),
+        ('⭐', 'star'),
+        ('💎', 'gem'),
+        ('👻', 'ghost'),
+        ('🤖', 'robot'),
+        ('💩', 'poop'),
+        ('@', 'at'),
+        ('$', 'dollar'),
+        ('&', 'ampersand'),
+        ('*', 'star ascii'),
+    ]
+    print()
+    print('Choose your cursor:')
+    for idx, (char, label) in enumerate(cursors, 1):
+        print(f'  {idx} = {char}  ({label})')
+    print('  Enter = keep current')
+    print()
+    print('Choice: ', end='', flush=True)
+    raw = sys.stdin.readline().rstrip()
+    if not raw:
+        return ''
+    try:
+        choice = int(raw)
+        if 1 <= choice <= len(cursors):
+            return cursors[choice - 1][0]
+        print('error: invalid choice')
+        return ''
+    except ValueError:
+        print('error: please enter a number')
+        return ''
 
 
 def ask_dimensions(param: dict) -> bool:  # type: ignore[type-arg]
@@ -241,7 +297,7 @@ def ask_dimensions(param: dict) -> bool:  # type: ignore[type-arg]
     return True
 
 
-def interaction(anim: bool) -> None:
+def interaction(anim: bool, cursor: str) -> None:
     """Print the list of available user commands to the terminal.
 
     This function is called after displaying the maze to show the user what
@@ -250,6 +306,7 @@ def interaction(anim: bool) -> None:
 
     Args:
         anim: Current animation state, shown next to option 6.
+        cursor: Current cursor character, shown next to option 8.
 
     Returns:
         None.
@@ -263,6 +320,7 @@ def interaction(anim: bool) -> None:
     print('5 = play the maze')
     print(f'6 = enable/disable generation animation (currently {anim_status})')
     print('7 = change maze dimensions')
+    print(f'8 = change cursor (currently {cursor})')
     print('q = quit')
     print()
 
@@ -299,6 +357,7 @@ def main() -> None:
     ]
     i = 0
     color = colors[i]
+    cursor = '█'
 
     try:
         cb = make_callback(set(), color) if anim else None
@@ -314,7 +373,7 @@ def main() -> None:
     if not maze.ft:
         print("warning: 42 pattern couldn't be reseolved "
               "(must be at least 9x7)")
-    interaction(anim)
+    interaction(anim, cursor)
     for line in sys.stdin:
         if line.rstrip() == 'q':
             break
@@ -337,7 +396,8 @@ def main() -> None:
                 i = 0
             color = colors[i]
         elif line.rstrip() == '5':  # play the maze
-            ft_interface(maze, param['entry'], param['exit'], path, color)
+            ft_interface(maze, param['entry'], param['exit'],
+                         path, color, cursor)
         elif line.rstrip() == '6':  # toggle animation
             anim = not anim
         elif line.rstrip() == '7':  # change maze dimensions
@@ -355,12 +415,19 @@ def main() -> None:
             else:
                 print('\nPress Enter to continue...')
                 sys.stdin.readline()
+        elif line.rstrip() == '8':  # change cursor
+            new_cursor = choose_cursor()
+            if new_cursor:
+                cursor = new_cursor
+            else:
+                print('\nPress Enter to continue...')
+                sys.stdin.readline()
         else:
             print('please select another key...')
         os.system('clear')
         display(maze.m, maze.ft, path, color, anim)
         print(f'seed: {maze.d}')
-        interaction(anim)
+        interaction(anim, cursor)
 
     print("Exit")
 

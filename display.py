@@ -77,7 +77,8 @@ def display(maze: list[list[Box]],
             animation: bool = False,
             pos: None | list[int] = None,
             start: None | list[int] = None,
-            end: None | list[int] = None) -> None:
+            end: None | list[int] = None,
+            cursor: str = '█') -> None:
     """Render the maze in the terminal using ANSI background colors.
 
     Each cell is drawn as a 2-character block. Walls are shown as colored
@@ -94,6 +95,7 @@ def display(maze: list[list[Box]],
         pos: Current player position as [x, y], or None if not in play mode.
         start: Entry cell coordinates as [x, y], or None.
         end: Exit cell coordinates as [x, y], or None.
+        cursor: Character displayed on the player's cell (default: space).
 
     Returns:
         None. Prints the maze directly to the terminal.
@@ -113,7 +115,9 @@ def display(maze: list[list[Box]],
             cell = maze[y][x]
             walls = cell.has_wall()
             if pos and pos[0] == x and pos[1] == y:
-                line += c.white + cwall if 'E' in walls else c.white + c.cell
+                cell_str = f'\033[47m{cursor} '
+                line += cell_str + cwall if 'E' in walls \
+                    else cell_str + c.cell
             elif start and start[0] == x and start[1] == y:
                 line += c.purple + cwall if 'E' in walls else c.purple + c.cell
             elif end and end[0] == x and end[1] == y:

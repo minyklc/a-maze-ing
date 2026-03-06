@@ -104,7 +104,7 @@ and multiple paths between entry and exit.
  - Display animation (`congif.txt`: `ANIMATION=True`, can be activate/deactivate with `stdin`: `6`)
  - Playable maze (`stdin`: `5`)
  - Change maze dimensions (`stdin`: `7`)
- - 
+ - Choose another cursor (`stdin`: `8`)
  - 
 
 ### Code Reusability
