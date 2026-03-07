@@ -6,11 +6,55 @@ import time
 import termios
 import tty
 import random
-from typing import Callable
+from typing import Callable, TypedDict, cast
 from MazeGenerator import Maze, Box
 from generator import generator
 from display import display
 from parsing import parsing
+
+
+class ParamDict(TypedDict, total=False):
+    """Typed dictionary for maze configuration parameters.
+
+    Attributes:
+        width: Maze width in number of cells.
+        height: Maze height in number of cells.
+        entry: Entry coordinates as [x, y].
+        exit: Exit coordinates as [x, y].
+        output_file: Output filename.
+        perfect: Whether to generate a perfect maze.
+        seed: Random seed for reproducibility.
+        animation: Whether to display generation animation.
+    """
+
+    width: int
+    height: int
+    entry: list[int]
+    exit: list[int]
+    output_file: str
+    perfect: bool
+    seed: int
+    animation: bool
+
+
+class ScoreDict(TypedDict):
+    """Typed dictionary for a completed game score.
+
+    Attributes:
+        seed: The maze seed used.
+        size: The maze dimensions as 'WxH' string.
+        time: Elapsed time in seconds.
+        steps: Number of steps taken by the player.
+        optimal: Length of the optimal path.
+        stars: Star rating string.
+    """
+
+    seed: int
+    size: str
+    time: float
+    steps: int
+    optimal: int
+    stars: str
 
 
 def up(pos: list[int], maze: list[list[Box]]) -> int:
@@ -80,7 +124,7 @@ def right(pos: list[int], maze: list[list[Box]]) -> int:
 def ft_interface(maze: Maze, entry: list[int],
                  exit: list[int], path: set[tuple[int, int]],
                  color: str, cursor: str = '█'
-                 ) -> dict | None:  # type: ignore[type-arg]
+                 ) -> ScoreDict | None:
     """Run the interactive play mode where the user navigates the maze.
 
     Puts the terminal into cbreak mode to capture arrow key inputs directly
@@ -115,7 +159,7 @@ def ft_interface(maze: Maze, entry: list[int],
     def redraw() -> None:
         elapsed = time.time() - start_time
         os.system('clear')
-        print(f'  ⏱  {elapsed:6.1f}s   👟 steps: {steps}'
+        print(f'⏱  {elapsed:6.1f}s   🐾 steps: {steps}'
               f'   🎯 optimal: {optimal}')
         display(maze.m, maze.ft, path, color, False, pos, maze.s, maze.e,
                 cursor)
@@ -189,21 +233,21 @@ def ft_interface(maze: Maze, entry: list[int],
             print(f'\n  💪 Congratulations!  {stars}')
             print(f'  Time: {elapsed:.1f}s  |  Steps: {steps}'
                   f'  |  Optimal: {optimal}')
-            return {
-                'seed': maze.d,
-                'size': f'{maze.w}x{maze.h}',
-                'time': elapsed,
-                'steps': steps,
-                'optimal': optimal,
-                'stars': stars,
-            }
+            return ScoreDict(
+                seed=int(maze.d),
+                size=f'{maze.w}x{maze.h}',
+                time=elapsed,
+                steps=steps,
+                optimal=optimal,
+                stars=stars,
+            )
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, stt)
     print("Exited")
     return None
 
 
-def print_scores(scores: list[dict]) -> None:  # type: ignore[type-arg]
+def print_scores(scores: list[ScoreDict]) -> None:
     """Display the leaderboard of all completed runs.
 
     Args:
@@ -313,7 +357,7 @@ def choose_cursor() -> str:
         return ''
 
 
-def ask_dimensions(param: dict) -> bool:  # type: ignore[type-arg]
+def ask_dimensions(param: ParamDict) -> bool:
     """Prompt the user for new maze dimensions and new entry/exit coordinates.
 
     Reads width and height from stdin, then always asks for new entry and
@@ -436,7 +480,7 @@ def main() -> None:
     color = colors[i]
     cursor = '\033[47m  \033[0m'
     anim2 = False
-    scores: list[dict] = []  # type: ignore[type-arg]
+    scores: list[ScoreDict] = []
 
     try:
         cb = make_callback(set(), color) if anim2 else None
@@ -491,7 +535,7 @@ def main() -> None:
             else:
                 anim = True
         elif line.rstrip() == '7':  # change maze dimensions
-            if ask_dimensions(param):
+            if ask_dimensions(cast(ParamDict, param)):
                 param['seed'] = random.randint(0, 2147483647)
                 path = set()
                 try:
