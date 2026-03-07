@@ -28,8 +28,8 @@ def maze_output(maze: Maze, file: str) -> None:
                 f.write(f'{maze.m[i][j].walls:X}')  # No espace in hex coords
             f.write('\n')
         f.write('\n')
-        f.write(f"{maze.s[0]}, {maze.s[1]}\n")
-        f.write(f"{maze.e[0]}, {maze.e[1]}\n")
+        f.write(f"{maze.s[0]},{maze.s[1]}\n")
+        f.write(f"{maze.e[0]},{maze.e[1]}\n")
         for d in maze.dir:
             f.write(d[0])
         f.write('\n')  # add \n at the end of the file
@@ -55,7 +55,8 @@ def generator(param: dict[str, Any],
     height = param['height']
     perfect = param['perfect']
     seed = param['seed']
-    maze = Maze(height, width, start, end, perfect, seed)
+    pattern = param.get('pattern', '42')
+    maze = Maze(height, width, start, end, perfect, seed, pattern)
     maze.generate(callback)
     maze_output(maze, param['output_file'])
     return maze
