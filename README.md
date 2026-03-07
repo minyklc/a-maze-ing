@@ -101,9 +101,10 @@ For the **imperfect mode**, dead-end cells get an additional wall removed to cre
 and multiple paths between entry and exit.
 
 ### Bonuses
- - Generation animation added (total 3 types of animation status)
+ - Generation animation added (3 animation status: `ON`, `ON while generating`, `OFF`)
  - Display animation (`congif.txt`: `ANIMATION=True`, can be activate/deactivate with `stdin`: `6`)
  - Playable maze (`stdin`: `5`)
+ - Performance statistics and display scoreboard.
  - Change maze dimensions (`stdin`: `7`)
  - Choose another cursor (`stdin`: `8`)
 
