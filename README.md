@@ -109,17 +109,6 @@ The maze generation logic is encapsulated in the `MazeGenerator` module (`MazeGe
 and packaged as a standalone pip-installable package (`mazegen-1.0.0-py3-none-any.whl`).
 The `MazeGenerator` module is reusable by import it, create `MazeGenerator` object and `maze.generator()` .
 
-To do:
-```
-  (bash)
-
-# In a virtualenv (venv):
-pip install build
-python -m build          # reads again pyproject.toml, recreates the .whl in dist/
-pip install dist/mazegen-1.0.0-py3-none-any.whl
-python3 -c "from mazegen import Maze; maze = Maze(...); maze.generate()"
-```
-
 **Installation:**
 ```
   (bash)
