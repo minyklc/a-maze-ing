@@ -41,6 +41,7 @@ class ScoreDict(TypedDict):
     """Typed dictionary for a completed game score.
 
     Attributes:
+        name: 3-letter player name entered after completing the maze.
         seed: The maze seed used.
         size: The maze dimensions as 'WxH' string.
         time: Elapsed time in seconds.
@@ -49,6 +50,7 @@ class ScoreDict(TypedDict):
         stars: Star rating string.
     """
 
+    name: str
     seed: int
     size: str
     time: float
@@ -233,7 +235,16 @@ def ft_interface(maze: Maze, entry: list[int],
             print(f'\n  💪 Congratulations!  {stars}')
             print(f'  Time: {elapsed:.1f}s  |  Steps: {steps}'
                   f'  |  Optimal: {optimal}')
+            termios.tcsetattr(fd, termios.TCSADRAIN, stt)
+            name = ''
+            while len(name) != 3 or not name.isalpha():
+                raw = input('  Enter your name (3 letters): ').strip().upper()
+                if len(raw) == 3 and raw.isalpha():
+                    name = raw
+                else:
+                    print('  Please enter exactly 3 letters.')
             return ScoreDict(
+                name=name,
                 seed=int(maze.d),
                 size=f'{maze.w}x{maze.h}',
                 time=elapsed,
@@ -252,7 +263,7 @@ def print_scores(scores: list[ScoreDict]) -> None:
 
     Args:
         scores: A list of scores dicts returned by ft_interface,
-                each containing 'seed', 'size', 'time', 'steps',
+                each containing 'name', 'seed', 'size', 'time', 'steps',
                 'optimal', and 'stars' keys.
 
     Returns:
@@ -262,17 +273,17 @@ def print_scores(scores: list[ScoreDict]) -> None:
         print('  No scores yet.')
         return
     print()
-    print('  ╔════════════════════════════════════════════════════════╗')
-    print('  ║                       🏆  SCORES                       ║')
-    print('  ╠═══════╦════════╦══════════╦════════╦══════════╦════════╣')
-    print('  ║  Run  ║  Size  ║   Seed   ║  Time  ║  Steps   ║   🌟   ║')
-    print('  ╠═══════╬════════╬══════════╬════════╬══════════╬════════╣')
-    for idx, s in enumerate(scores, 1):
+    print('  ╔═══════════════════════════════════════════════════════╗')
+    print('  ║                      🏆  SCORES                       ║')
+    print('  ╠══════╦════════╦══════════╦════════╦══════════╦════════╣')
+    print('  ║ Name ║  Size  ║   Seed   ║  Time  ║  Steps   ║   🌟   ║')
+    print('  ╠══════╬════════╬══════════╬════════╬══════════╬════════╣')
+    for s in scores:
         seed_str = str(s['seed'])[:8]
         steps_str = f"{s['steps']}/{s['optimal']}"
-        print(f"  ║  {idx:<4} ║ {s['size']:<6} ║ {seed_str:<8} ║"
+        print(f"  ║ {s['name']:<4} ║ {s['size']:<6} ║ {seed_str:<8} ║"
               f" {s['time']:5.1f}s ║ {steps_str:<8} ║ {s['stars']} ║")
-    print('  ╚═══════╩════════╩══════════╩════════╩══════════╩════════╝')
+    print('  ╚══════╩════════╩══════════╩════════╩══════════╩════════╝')
     print()
 
 
