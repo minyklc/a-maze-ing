@@ -55,7 +55,8 @@ def generator(param: dict[str, Any],
     height = param['height']
     perfect = param['perfect']
     seed = param['seed']
-    maze = Maze(height, width, start, end, perfect, seed)
+    pattern = param.get('pattern', '42')
+    maze = Maze(height, width, start, end, perfect, seed, pattern)
     maze.generate(callback)
     maze_output(maze, param['output_file'])
     return maze

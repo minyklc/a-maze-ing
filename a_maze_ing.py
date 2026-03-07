@@ -357,6 +357,42 @@ def choose_cursor() -> str:
         return ''
 
 
+def choose_pattern() -> str:
+    """Prompt the user to pick a pattern to embed in the maze.
+
+    Displays the available named patterns with a small ASCII preview.
+    The user enters the corresponding number, or presses Enter to keep
+    the current pattern. Returns the chosen pattern name, or '' on
+    invalid/empty input (caller keeps the current pattern).
+
+    Returns:
+        The chosen pattern name string ('42', 'PA', 'MINA'), or ''.
+    """
+    from MazeGenerator import Maze
+    patterns = list(Maze.PATTERNS.keys())
+    print("\nChoose a pattern:")
+    for idx, name in enumerate(patterns, 1):
+        rows = Maze.PATTERNS[name]
+        w = len(rows[0]) + 2
+        h = len(rows) + 2
+        print(f'  {idx} = {name}  (needs maze >= {w} width x {h} height)')
+        for row in rows:
+            print('      ' + row.replace('#', '█').replace(' ', '·'))
+    print("  Enter = keep current\n")
+    raw = input('Choice: ')
+    if not raw:
+        return ''
+    try:
+        choice = int(raw)
+        if 1 <= choice <= len(patterns):
+            return patterns[choice - 1]
+        print('error: invalid choice')
+        return ''
+    except ValueError:
+        print('error: please enter a number')
+        return ''
+
+
 def ask_dimensions(param: ParamDict) -> bool:
     """Prompt the user for new maze dimensions and new entry/exit coordinates.
 
@@ -417,7 +453,8 @@ def ask_dimensions(param: ParamDict) -> bool:
     return True
 
 
-def interaction(anim: bool, anim2: bool, cursor: str) -> None:
+def interaction(anim: bool, anim2: bool, cursor: str,
+                pattern: str = '42') -> None:
     """Print the list of available user commands to the terminal.
 
     This function is called after displaying the maze to show the user what
@@ -426,7 +463,9 @@ def interaction(anim: bool, anim2: bool, cursor: str) -> None:
 
     Args:
         anim: Current animation state, shown next to option 6.
+        anim2: Secondary animation state (generate-only).
         cursor: Current cursor character, shown next to option 8.
+        pattern: Current pattern name, shown next to option 9.
 
     Returns:
         None.
@@ -442,6 +481,7 @@ def interaction(anim: bool, anim2: bool, cursor: str) -> None:
     print(f'6 = enable/disable generation animation (currently {anim_status})')
     print('7 = change maze dimensions')
     print(f'8 = change cursor (currently {cursor})')
+    print(f'9 = change pattern (currently {pattern})')
     print('q = quit')
     print()
 
@@ -480,10 +520,12 @@ def main() -> None:
     color = colors[i]
     cursor = '\033[47m  \033[0m'
     anim2 = False
+    pattern = '42'
     scores: list[ScoreDict] = []
 
     try:
         cb = make_callback(set(), color) if anim2 else None
+        param['pattern'] = pattern
         maze = generator(param, cb)
     except ValueError:
         print('error: entry or exit in 42 pattern '
@@ -496,7 +538,7 @@ def main() -> None:
     if not maze.ft:
         print("warning: 42 pattern couldn't be reseolved "
               "(must be at least 9x7)")
-    interaction(anim, anim2, cursor)
+    interaction(anim, anim2, cursor, pattern)
     for line in sys.stdin:
         if line.rstrip() == 'q':
             break
@@ -524,7 +566,7 @@ def main() -> None:
             if score:
                 scores.append(score)
                 print_scores(scores)
-                print('Press Enter to continue...')
+                print('\nPress Enter to continue...')
                 sys.stdin.readline()
         elif line.rstrip() == '6':  # toggle animation
             if anim and not anim2:
@@ -556,12 +598,28 @@ def main() -> None:
             else:
                 print('\nPress Enter to continue...')
                 sys.stdin.readline()
+        elif line.rstrip() == '9':  # change pattern
+            new_pattern = choose_pattern()
+            if new_pattern and new_pattern != pattern:
+                pattern = new_pattern
+                param['pattern'] = pattern
+                path = set()
+                try:
+                    cb = make_callback(maze.ft, color) if anim2 else None
+                    maze = generator(param, cb)
+                except ValueError:
+                    print('error: entry or exit inside pattern, '
+                          'please choose other coordinates.')
+                    sys.stdin.readline()
+            else:
+                print('\nPress Enter to continue...')
+                sys.stdin.readline()
         else:
             print('please select another key...')
         os.system('clear')
         display(maze.m, maze.ft, path, color, anim)
         print(f'seed: {maze.d}')
-        interaction(anim, anim2, cursor)
+        interaction(anim, anim2, cursor, pattern)
 
     if scores:
         print_scores(scores)

@@ -145,7 +145,8 @@ class Maze:
     def __init__(self, height: int, width: int,
                  start: list[int], end: list[int],
                  perfect: bool,
-                 seed: str | int):
+                 seed: str | int,
+                 pattern: str = '42'):
         """Initialize the maze with its dimensions and parameters.
 
         Args:
@@ -155,6 +156,8 @@ class Maze:
             end: Exit coordinates as [x, y].
             perfect: If True, generate a perfect maze (unique path).
             seed: Random seed for reproducibility.
+            pattern: Name of the pattern to embed ('42', 'PA', 'MINA').
+                     Defaults to '42'.
 
         Returns:
             None.
@@ -165,6 +168,7 @@ class Maze:
         self.s = start
         self.e = end
         self.d = seed
+        self.pattern = pattern
 
     def blank_maze(self, height: int, width: int) -> list[list[Box]]:
         """Create a grid of Box cells with all walls closed.
@@ -183,38 +187,99 @@ class Maze:
                 maze[n].append(Box(b, n))
         return maze
 
-    def forty_two(self, height: int, width: int) -> set[tuple[int, int]]:
-        """Compute the cell positions forming the '42' pattern.
+    # Patterns for '42', 'PA', 'MINA' (height = 5, adapted width).
+    # Each string uses '#' for filled cells, ' ' for empty.
+    # Look at this Mina, flood-filled is finally useful XD
+    PATTERNS: dict[str, list[str]] = {
+        '42': [
+            "#   ###",
+            "#     #",
+            "### ###",
+            "  # #  ",
+            "  # ###",
+        ],
+        'PA': [
+            "### ###",
+            "# # # #",
+            "### ###",
+            "#   # #",
+            "#   # #",
+        ],
+        'MINA': [
+            "# # # #  # ###",
+            "### # ## # # #",
+            "# # # ## # ###",
+            "# # # # ## # #",
+            "# # # #  # # #",
+        ],
+        'POOP': [
+            "### ### ### ###",
+            "# # # # # # # #",
+            "### # # # # ###",
+            "#   # # # # #  ",
+            "#   ### ### #  ",
+        ],
+        'OLI': [
+            "### #   ###",
+            "# # #    # ",
+            "# # #    # ",
+            "# # #    # ",
+            "### ### ###",
+        ],
+    }
 
-        The pattern is centered in the maze. Requires at least 9x7 cells.
+    def forty_two(self, height: int, width: int,
+                  pattern: str = '42') -> set[tuple[int, int]]:
+        """Compute the cell positions for the given named pattern.
+
+        The pattern is centered in the maze. Returns an empty set if the
+        maze is too small to fit the pattern and prints an error in that
+        case.
 
         Args:
             height: Number of rows.
             width: Number of columns.
+            pattern: Name of the pattern ('42', 'PA', 'MINA').
+                     Unknown names fall back to '42'.
 
         Returns:
-            Set of (x, y) tuples for cells belonging to the '42' pattern.
+            Set of (x, y) tuples for cells belonging to the pattern.
         """
-        total = set()
+        # total = set()
 
-        if height >= 7 and width >= 9:
-            pos_x = int((width - 7) / 2)
-            pos_y = int((height - 5) / 2)
-            x = pos_x
-            y = pos_y
-            menu = [
-                [0, 4, 1, 1],
-                [0, 6],
-                [0, 1, 1, 2, 1, 1],
-                [2, 2],
-                [2, 2, 1, 1]
-            ]
-            for m in menu:
-                for i in m:
-                    x += i
-                    total.add((x, y))
-                x = pos_x
-                y += 1
+        # if height >= 7 and width >= 9:
+        #     pos_x = int((width - 7) / 2)
+        #     pos_y = int((height - 5) / 2)
+        #     x = pos_x
+        #     y = pos_y
+        #     menu = [
+        #         [0, 4, 1, 1],
+        #         [0, 6],
+        #         [0, 1, 1, 2, 1, 1],
+        #         [2, 2],
+        #         [2, 2, 1, 1]
+        #     ]
+        #     for m in menu:
+        #         for i in m:
+        #             x += i
+        #             total.add((x, y))
+        #         x = pos_x
+        #         y += 1
+        # return total
+        rows = self.PATTERNS.get(pattern, self.PATTERNS['42'])
+        pat_w = len(rows[0])
+        pat_h = len(rows)
+        if height < pat_h + 2 or width < pat_w + 2:
+            print(f'error: maze too small to display "{pattern}" pattern'
+                  f' (need {pat_w + 2} width x {pat_h + 2} height)')
+            return set()
+        pos_x = (width - pat_w) // 2
+        pos_y = (height - pat_h) // 2
+        total: set[tuple[int, int]] = set()
+        for dy, row in enumerate(rows):
+            for dx, cell in enumerate(row):
+                if cell == '#':
+                    total.add((pos_x + dx, pos_y + dy))
         return total
 
     def generate(self,
@@ -233,7 +298,7 @@ class Maze:
             ValueError: If entry or exit falls inside the '42' pattern.
         """
         self.m = self.blank_maze(self.h, self.w)
-        self.ft = self.forty_two(self.h, self.w)
+        self.ft = self.forty_two(self.h, self.w, self.pattern)
         if tuple(self.s) in self.ft or tuple(self.e) in self.ft:
             raise ValueError()
         if self.p:

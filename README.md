@@ -107,6 +107,7 @@ and multiple paths between entry and exit.
  - Performance statistics and display scoreboard.
  - Change maze dimensions (`stdin`: `7`)
  - Choose another cursor (`stdin`: `8`)
+ - You can change the 42-pattern with your name (`stdin`: `9`), you only have to draw it in built-in pixel art, in `MazeGenerator.py` -> `Maze` class -> `PATTERNS`
 
 ### Code Reusability
 
