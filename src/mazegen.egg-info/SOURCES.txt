@@ -3,6 +3,7 @@ pyproject.toml
 setup.py
 src/mazegen/MazeGenerator.py
 src/mazegen/__init__.py
+src/mazegen/py.typed
 src/mazegen.egg-info/PKG-INFO
 src/mazegen.egg-info/SOURCES.txt
 src/mazegen.egg-info/dependency_links.txt

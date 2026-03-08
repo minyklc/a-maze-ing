@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from MazeGenerator import Box, Maze
+from mazegen import Box, Maze
 from typing import Any, Callable, Optional
 
 
