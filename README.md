@@ -105,9 +105,9 @@ For the **imperfect mode**, dead-end cells get an additional wall removed to cre
 
 ### Code Reusability
 
-The maze generation logic is encapsulated in the `MazeGenerator` module (`MazeGenerator.py`) \
-and packaged as a standalone pip-installable package (`mazegen-1.0.0-py3-none-any.whl`).
-The `MazeGenerator` module is reusable by import it, create `MazeGenerator` object and `maze.generator()` .
+The maze generation logic is encapsulated in the `MazeGenerator` module (`MazeGenerator.py`) and packaged as a standalone pip-installable package (`mazegen-1.0.0-py3-none-any.whl`). \
+The package exposes two classes: `Box` (a single maze cell) and `Maze` (the full generator). To use it in any project, you have to install the ***`.whl`***, import `Maze`, instantiate it with your parameters, call `maze.generate()`, then access the grid, path, and pattern via attributes. \
+The package can be rebuilt from source (`scr` folder) at any time using `pyproject.toml` (with *`build`* package) and `setup.py` (a fallback/backup way which doesn't need *`build`* package), both provided at the root of the repository. See the section "**Building the package from source**" below.
 
 **Installation:**
 ```
@@ -182,6 +182,7 @@ python3 -c "from mazegen import Maze; print('OK')"
 inverted path direction in `solver()`). It was also used to generate or standardize docstrings
 for some functions.
 All AI-generated content was reviewed, tested, and understood before being included.
+AI was also used to understand concepts related to the pip package (.whl, .toml, src, build, setup, etc).
 
 ---
 
@@ -200,7 +201,6 @@ at the same time.
 
 **What worked well:** Everything was OK. The algorithm/display split was clean and let both members
 satisfied with their work. We have tested, debugged and created bonuses together.
-much easier.
 
 **What could be improved:** Maybe more bonuses...
 
