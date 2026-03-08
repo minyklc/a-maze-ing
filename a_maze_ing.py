@@ -6,8 +6,8 @@ import time
 import termios
 import tty
 import random
-from typing import Callable, TypedDict, cast
-from MazeGenerator import Maze, Box
+from typing import Callable, TypedDict, Any, cast
+from mazegen import Maze, Box
 from generator import generator
 from display import display
 from parsing import parsing
@@ -368,7 +368,7 @@ def choose_cursor() -> str:
         return ''
 
 
-def choose_pattern() -> str:
+def choose_pattern() -> Any:
     """Prompt the user to pick a pattern to embed in the maze.
 
     Displays the available named patterns with a small ASCII preview.
@@ -379,7 +379,7 @@ def choose_pattern() -> str:
     Returns:
         The chosen pattern name string ('42', 'PA', 'MINA'), or ''.
     """
-    from MazeGenerator import Maze
+    from mazegen import Maze
     patterns = list(Maze.PATTERNS.keys())
     print("\nChoose a pattern:")
     for idx, name in enumerate(patterns, 1):
