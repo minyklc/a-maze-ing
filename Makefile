@@ -10,7 +10,7 @@ debug:
 	python3 -m pdb a_maze_ing.py
 
 clean:
-	rm -rf .mypy_cache __pycache__ build dist *.egg-info
+	rm -rf .mypy_cache __pycache__ build dist *.egg-info */*.egg-info
 
 lint:
 	python3 -m flake8 . --exclude=src,build,setup.py,venv && python3 -m mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --exclude src --exclude build --exclude setup --exclude venv
