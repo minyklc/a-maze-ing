@@ -116,7 +116,7 @@ For the **imperfect mode**, dead-end cells get an additional wall removed to cre
 
 The maze generation logic is encapsulated in the `MazeGenerator` module (`MazeGenerator.py`) and packaged as a standalone pip-installable package (`mazegen-1.0.0-py3-none-any.whl`). \
 The package exposes two classes: `Box` (a single maze cell) and `Maze` (the full generator). To use it in any project, you have to install the ***`.whl`***, import `Maze`, instantiate it with your parameters, call `Maze().generate()` method, then access the grid, path, and pattern via attributes. \
-The package can be rebuilt from source (`scr` folder) at any time using `pyproject.toml` (with *`build`* package) and `setup.py` (a fallback/backup way which doesn't need *`build`* package), both provided at the root of the repository. See the section "**Building the package from source**" below.
+The package can be rebuilt from source (`src` folder) at any time using `pyproject.toml` (with *`build`* package) and `setup.py` (a fallback/backup way which doesn't need *`build`* package), both provided at the root of the repository. See the section "**Building the package from source**" below.
 
 **Installation:**
 ```
